@@ -1,0 +1,3 @@
+# Allow .env.production to be committed for Vercel build-time configuration
+# (Contains only public URLs, no secrets)
+!.env.production

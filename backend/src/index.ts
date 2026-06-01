@@ -32,10 +32,17 @@ app.use(compression()); // Compress responses
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',');
+      const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(o => o.trim());
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+
+      if (
+        allowedOrigins.includes('*') ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith('.vercel.app') ||
+        origin.startsWith('http://localhost:') ||
+        process.env.NODE_ENV === 'development'
+      ) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
