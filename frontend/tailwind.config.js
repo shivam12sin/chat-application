@@ -40,6 +40,11 @@ export default {
                 'glass-lg': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04), inset 0 0 50px rgba(255,255,255,0.02)', // --elevation-2
                 'glass-inner': 'inset 0 1px 1px rgba(255,255,255,0.1), inset 0 0 20px rgba(255,255,255,0.02)',
             },
+            height: {
+                // Dynamic viewport height - accounts for mobile browser chrome (address bar)
+                'screen': ['100dvh', '100vh'],
+                'screen-dvh': '100dvh',
+            },
             animation: {
                 'glass-blur': 'blur-motion 0.3s cubic-bezier(0.2, 0.9, 0.2, 1)',
                 'fade-up': 'fade-up 0.22s cubic-bezier(0.2, 0.9, 0.2, 1)',
@@ -49,6 +54,7 @@ export default {
                 'pulse-subtle': 'pulse-subtle 2s cubic-bezier(0.2, 0.9, 0.2, 1) infinite',
                 'scale-in': 'scale-in 0.3s cubic-bezier(0.2, 0.9, 0.2, 1)',
                 'slide-in-right': 'slide-in-right 0.3s cubic-bezier(0.2, 0.9, 0.2, 1)',
+                'slide-right': 'slide-right 0.3s cubic-bezier(0.2, 0.9, 0.2, 1)',
             },
             keyframes: {
                 'fade-up': {
@@ -82,6 +88,10 @@ export default {
                 'slide-in-right': {
                     '0%': { transform: 'translateX(20px)', opacity: '0' },
                     '100%': { transform: 'translateX(0)', opacity: '1' },
+                },
+                'slide-right': {
+                    '0%': { transform: 'translateX(-100%)' },
+                    '100%': { transform: 'translateX(0)' },
                 },
             },
             transitionDuration: {

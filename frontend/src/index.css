@@ -18,7 +18,27 @@
   }
 
   body {
-    @apply bg-black text-mono-text font-sans antialiased overflow-hidden;
+    @apply bg-black text-mono-text font-sans antialiased;
+    overflow: hidden;
+    /* Use dynamic viewport height to account for mobile browser chrome */
+    height: 100dvh;
+    height: 100vh; /* Fallback for browsers that don't support dvh */
+  }
+
+  /* Fix viewport height on mobile browsers (e.g., Chrome Android address bar) */
+  .h-screen {
+    height: 100dvh !important;
+    height: 100vh !important; /* Fallback */
+  }
+
+  /* Safe area inset for iPhone notch/home bar */
+  .composer-safe-area {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Prevent iOS double-tap zoom on interactive elements */
+  button, input, textarea, select {
+    touch-action: manipulation;
   }
 }
 

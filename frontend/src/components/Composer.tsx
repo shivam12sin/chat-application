@@ -141,7 +141,7 @@ const Composer: React.FC<ComposerProps> = ({
   return (
     <div
       className={cn(
-        "flex-shrink-0 p-4 pb-6" /* Added padding bottom for spacing */,
+        "flex-shrink-0 p-4 pb-6 composer-safe-area" /* Added padding bottom for spacing + safe area inset */,
         "bg-mono-bg",
         className,
       )}
