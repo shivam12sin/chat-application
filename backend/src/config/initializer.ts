@@ -111,6 +111,39 @@ export async function initializeDatabase(): Promise<void> {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     }
 
+    // Clean up duplicate tables from half-migrated state to avoid relation already exists crashes
+    try {
+      const pgmigrationsTableExists = await Database.query(`
+        SELECT EXISTS (
+          SELECT FROM pg_tables 
+          WHERE schemaname = 'public' 
+          AND tablename = 'pgmigrations'
+        );
+      `);
+
+      if (pgmigrationsTableExists.rows[0]?.exists) {
+        const migrationChecked = await Database.query(`
+          SELECT name FROM pgmigrations WHERE name = '1765268078300_add-contacts';
+        `);
+        if (migrationChecked.rows.length === 0) {
+          console.log(
+            'Database Initializer: Clean up duplicate tables from half-migrated state...'
+          );
+          await Database.query('DROP TABLE IF EXISTS friend_requests CASCADE;');
+          await Database.query('DROP TABLE IF EXISTS contacts CASCADE;');
+        }
+      } else {
+        console.log('Database Initializer: Clean up duplicate tables on initial start...');
+        await Database.query('DROP TABLE IF EXISTS friend_requests CASCADE;');
+        await Database.query('DROP TABLE IF EXISTS contacts CASCADE;');
+      }
+    } catch (err) {
+      console.warn(
+        'Database Initializer: Warning during duplicate table cleanup (non-fatal):',
+        err
+      );
+    }
+
     // Configure the ClientConfig for node-pg-migrate
     const dbConfig = process.env.DATABASE_URL
       ? {
