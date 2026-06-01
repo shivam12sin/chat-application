@@ -18,6 +18,22 @@ function getDbConnectionString(): string {
   return `postgresql://${user}:${password}@${host}:${port}/${name}`;
 }
 
+function parseConnectionString(urlStr: string) {
+  try {
+    const parsed = new URL(urlStr);
+    return {
+      user: decodeURIComponent(parsed.username),
+      password: decodeURIComponent(parsed.password),
+      host: parsed.hostname,
+      port: parsed.port || '5432',
+      database: decodeURIComponent(parsed.pathname.substring(1)),
+    };
+  } catch (err) {
+    console.error('Database Initializer: Error parsing database URL:', err);
+  }
+  return null;
+}
+
 export async function initializeDatabase(): Promise<void> {
   console.log('Database Initializer: Starting database schema and migration checks...');
 
@@ -88,6 +104,16 @@ export async function initializeDatabase(): Promise<void> {
       ...process.env,
       DATABASE_URL: databaseUrl,
     };
+
+    // Parse DATABASE_URL into individual components to support E2E migrations that bypass node-pg-migrate's pool
+    const parsedParams = parseConnectionString(databaseUrl);
+    if (parsedParams) {
+      env.DB_USER = parsedParams.user;
+      env.DB_PASSWORD = parsedParams.password;
+      env.DB_HOST = parsedParams.host;
+      env.DB_PORT = parsedParams.port;
+      env.DB_NAME = parsedParams.database;
+    }
 
     // If DATABASE_URL is present (e.g. on Render), enforce SSL and bypass self-signed certificate validation
     if (process.env.DATABASE_URL) {
