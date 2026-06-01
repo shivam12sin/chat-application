@@ -1,0 +1,121 @@
+/* Custom styles for emoji-picker-react to match Cosmic Liquid Glass theme */
+/* Uses same lavender/purplish tint as date picker */
+
+/* Override search input */
+.EmojiPickerReact input.epr-search {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #c8c8d8 !important;
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.6rem !important;
+    border-radius: 0.5rem !important;
+}
+
+.EmojiPickerReact input.epr-search:focus {
+    border-color: rgba(138, 130, 255, 0.5) !important;
+    box-shadow: 0 0 0 2px rgba(138, 130, 255, 0.15) !important;
+}
+
+.EmojiPickerReact input.epr-search::placeholder {
+    color: #8888aa !important;
+}
+
+/* Search container */
+.EmojiPickerReact .epr-search-container {
+    padding: 0.4rem !important;
+}
+
+/* Category icons */
+.EmojiPickerReact .epr-category-nav {
+    padding: 0.2rem 0.3rem !important;
+}
+
+.EmojiPickerReact .epr-cat-btn {
+    opacity: 0.5;
+    transition: all 0.15s ease;
+    padding: 0.2rem !important;
+}
+
+.EmojiPickerReact .epr-cat-btn:hover {
+    opacity: 1;
+}
+
+.EmojiPickerReact .epr-cat-btn.epr-active {
+    opacity: 1;
+    background-color: rgba(138, 130, 255, 0.2) !important;
+    border-radius: 0.375rem;
+}
+
+/* Category label */
+.EmojiPickerReact .epr-emoji-category-label {
+    font-size: 0.6rem !important;
+    font-weight: 500 !important;
+    color: #8888aa !important;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.5rem !important;
+    background-color: transparent !important;
+}
+
+/* Emoji buttons - smaller and with breathing room */
+.EmojiPickerReact button.epr-emoji {
+    border-radius: 0.4rem !important;
+    transition: all 0.15s ease !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 20px !important;
+    margin: 2px !important;
+}
+
+.EmojiPickerReact button.epr-emoji:hover {
+    background-color: rgba(138, 130, 255, 0.25) !important;
+    transform: scale(1.15);
+}
+
+/* Emoji grid with gaps */
+.EmojiPickerReact .epr-emoji-list {
+    gap: 4px !important;
+    padding: 0.25rem !important;
+}
+
+/* Emoji body */
+.EmojiPickerReact .epr-body {
+    padding: 0.25rem !important;
+}
+
+/* Scrollbar */
+.EmojiPickerReact .epr-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.EmojiPickerReact .epr-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.EmojiPickerReact .epr-body::-webkit-scrollbar-thumb {
+    background-color: rgba(138, 130, 255, 0.2);
+    border-radius: 2px;
+}
+
+.EmojiPickerReact .epr-body::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(138, 130, 255, 0.35);
+}
+
+/* Picker container */
+.EmojiPickerReact {
+    --epr-bg-color: rgba(18, 18, 26, 0.98) !important;
+    --epr-category-label-bg-color: transparent !important;
+    --epr-hover-bg-color: rgba(138, 130, 255, 0.2) !important;
+    --epr-search-input-bg-color: rgba(255, 255, 255, 0.05) !important;
+    --epr-picker-border-color: rgba(255, 255, 255, 0.12) !important;
+    --epr-search-border-color: rgba(255, 255, 255, 0.1) !important;
+    --epr-text-color: #c8c8d8 !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    font-size: 0.75rem !important;
+}
+
+/* Header area */
+.EmojiPickerReact .epr-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}

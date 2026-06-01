@@ -1,0 +1,289 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+
+  /* Metallic Chrome Design Tokens */
+  :root {
+    --metal-rim: linear-gradient(135deg, #2a2a2a 0%, #5a5a5a 20%, #8a8a8a 40%, #ffffff 50%, #8a8a8a 60%, #5a5a5a 80%, #2a2a2a 100%);
+    --chromatic-edge: conic-gradient(from 200deg,
+        rgba(255, 100, 100, 0.6) 0deg,
+        rgba(100, 200, 255, 0.5) 60deg,
+        rgba(255, 220, 100, 0.5) 120deg,
+        rgba(100, 255, 150, 0.4) 180deg,
+        rgba(200, 100, 255, 0.5) 240deg,
+        rgba(255, 150, 100, 0.5) 300deg,
+        rgba(255, 100, 100, 0.6) 360deg);
+  }
+
+  body {
+    @apply bg-black text-mono-text font-sans antialiased overflow-hidden;
+  }
+}
+
+@layer components {
+
+  /* Cosmic Base */
+  .cosmic-noise {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E");
+    /* Hack: Use a static noise image instead of live filter if possible, 
+       but for now optimizing the filter properties or usage. 
+       Actually, switching to a simpler pattern is better. */
+    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyBAMAAADsEZWCAAAAGFBMVEUAAAA5OTkAAAAAAAAAAABMTExERERmZmZnATESAAAACHRSTlMAMwA5MzMzM7MzMzMAAAABMQAAACwAAAAAMgAyAAACeIyPqcvtD6OctNqLs968+w+G4kiW5omm6sq27gvH8kzX9o3n+s73/g8MCofEovGITCqXzKbzCY1Kp9Sq9YrNarfcrvcLDovH5LL5jM5qt9yu9wsOi8fksvmMzmq33K73Cw6Lx+Sy+YzOarfcrcAD");
+    background-repeat: repeat;
+  }
+
+  /* Layer 2: Liquid Glass Panel with Metallic Edge */
+  .glass-panel {
+    @apply bg-black/90 border border-white/10 shadow-glass rounded-xl relative overflow-hidden transition-all duration-500 ease-glass;
+    /* backdrop-filter: blur(10px); -- REMOVED GLOBALLY */
+    /* apply backdrop-blur-glass -- REMOVED */
+    box-shadow:
+      0 4px 30px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  /* Adaptive Blur: Slightly stronger on hover/focus */
+  .glass-panel:hover,
+  .glass-panel:focus-within {
+    /* Stabilize blur - don't change it on hover to avoid GPU recalc */
+    /* backdrop-filter: blur(10px); */
+
+    /* P2: Reduced shadow spread significantly */
+    box-shadow:
+      0 8px 20px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  /* Inner light gradient for glass */
+  .glass-panel::after {
+    content: '';
+    @apply absolute inset-0 rounded-xl pointer-events-none transition-opacity duration-500;
+    background: linear-gradient(125deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 40%, rgba(255, 255, 255, 0) 60%, rgba(255, 255, 255, 0.01) 100%);
+  }
+
+  /* Glass Button with Subtle Chrome Rim - Dark Face Style */
+  .btn-glass {
+    @apply px-4 py-2 rounded-xl font-medium text-mono-text transition-all duration-300 ease-glass disabled:opacity-40 disabled:cursor-not-allowed;
+    background: rgba(20, 20, 22, 0.98);
+    border: none;
+    position: relative;
+    overflow: visible;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+      0 2px 8px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Chrome/metallic rim - visible by default */
+  .btn-glass::before {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    background: linear-gradient(135deg,
+        rgba(60, 60, 65, 0.8) 0%,
+        rgba(120, 120, 130, 0.5) 30%,
+        rgba(180, 180, 190, 0.6) 50%,
+        rgba(120, 120, 130, 0.5) 70%,
+        rgba(60, 60, 65, 0.8) 100%);
+    z-index: -1;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Chromatic/prismatic edge - subtle visible by default */
+  /* Simplified .btn-glass::after - No Rainbow */
+  .btn-glass::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    /* Static Metallic Sheen */
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  .btn-glass:hover::before {
+    opacity: 0.8;
+  }
+
+  .btn-glass:hover::after {
+    opacity: 1;
+  }
+
+  .btn-glass:hover {
+    background: rgba(28, 28, 30, 0.98);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+      0 4px 16px rgba(0, 0, 0, 0.5);
+  }
+
+  /* No active scale or brightness shifts */
+  .btn-glass:active {
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Dim the chrome rim slightly when pressed */
+  .btn-glass:active::before {
+    opacity: 0.4;
+    filter: brightness(0.8);
+  }
+
+  /* ===== CIRCULAR CHROME BUTTON ===== */
+  /* For action buttons like Send, matching reference images */
+  /* Simplified .btn-chrome-circle - No Chromatic Aberration */
+  .btn-chrome-circle {
+    @apply flex items-center justify-center text-mono-text transition-all duration-300 ease-glass disabled:opacity-40;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(20, 20, 20, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-chrome-circle:hover {
+    background: rgba(30, 30, 30, 0.95);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .btn-chrome-circle:active {
+    background: rgba(10, 10, 10, 1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* No scale */
+  }
+
+  /* Input Glass - Metallic edge enhancement */
+  .input-glass {
+    @apply w-full px-4 py-3 rounded-lg bg-white/10 border border-white/10 text-mono-text placeholder-mono-muted focus:outline-none transition-all duration-300 ease-glass;
+    /* backdrop-filter: blur(4px); -- Removed for GPU performance */
+    /* P2: Reduced from 10px */
+    box-shadow: var(--metal-inset), 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .input-glass:focus {
+    @apply bg-white/10 border-white/20;
+    /* backdrop-filter: blur(6px); -- Removed */
+    /* P2: Reduced from 16px */
+    box-shadow: var(--metal-inset), 0 4px 16px rgba(0, 0, 0, 0.4), 0 0 8px rgba(255, 255, 255, 0.04);
+  }
+
+  /* Layer 2: Message Tiles (Floating Glass) */
+  .message-bubble {
+    @apply px-4 py-2.5 rounded-lg max-w-[480px] break-words relative text-[15px] leading-relaxed border border-white/5 shadow-sm transition-all duration-300;
+    /* backdrop-filter: blur(6px); -- Removed for GPU performance (Layer Explosion) */
+  }
+
+  .message-bubble:hover {
+    /* backdrop-filter: blur(8px); -- Removed */
+    /* P2: Reduced from 20px */
+  }
+
+  .message-sent {
+    @apply bg-white/10 text-white rounded-tr-sm;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.02);
+  }
+
+  .message-received {
+    @apply bg-black/40 text-mono-text/90 rounded-tl-sm;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.01);
+  }
+
+  /* Custom Scrollbar - Minimal */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+  }
+
+  /* --- Interstellar Black Hole (Gargantua) --- */
+  .black-hole-container {
+    perspective: 1500px;
+    transform-style: preserve-3d;
+  }
+
+  /* 1. Main Accretion Disk - The flat spinning ring */
+  .accretion-disk-base {
+    /* Fiery Orange/Gold/White Gradient */
+    background:
+      radial-gradient(circle at center, transparent 40%, rgba(255, 240, 200, 0.8) 50%, transparent 68%),
+      conic-gradient(from 0deg,
+        transparent 0deg,
+        rgba(255, 200, 100, 0.2) 60deg,
+        rgba(255, 100, 50, 0.1) 120deg,
+        rgba(255, 220, 150, 0.4) 180deg,
+        rgba(255, 50, 0, 0.1) 240deg,
+        rgba(255, 200, 100, 0.3) 300deg,
+        transparent 360deg);
+    background-blend-mode: screen;
+    filter: blur(4px) contrast(1.1) brightness(1.1);
+    opacity: 1;
+    box-shadow: 0 0 60px rgba(255, 150, 50, 0.15);
+    /* Soft outer glow */
+  }
+
+  /* 2. Turbulence - Detailed brighter streaks */
+  .accretion-turbulence {
+    background: conic-gradient(from 180deg,
+        transparent 0deg,
+        rgba(255, 255, 255, 0.9) 45deg,
+        transparent 90deg,
+        rgba(255, 200, 100, 0.5) 135deg,
+        transparent 180deg,
+        rgba(255, 255, 255, 0.9) 225deg,
+        transparent 270deg,
+        rgba(255, 200, 100, 0.5) 315deg,
+        transparent 360deg);
+    filter: blur(3px);
+    mix-blend-mode: plus-lighter;
+  }
+
+  /* 3. Gravitational Lensing (The "Arch" over the top/bottom)
+     This simulates the light from behind the black hole being bent over it.
+  */
+  .gravitational-arch {
+    background: radial-gradient(circle at center, transparent 50%, rgba(255, 200, 100, 0.3) 60%, rgba(255, 100, 50, 0.6) 65%, rgba(255, 200, 100, 0.3) 70%, transparent 80%);
+    filter: blur(12px) brightness(1.5);
+    mix-blend-mode: screen;
+    transform-style: preserve-3d;
+  }
+
+  /* The Photon Ring - The sharpest, brightest ring nearest the void */
+  .photon-ring {
+    box-shadow:
+      inset 0 0 8px rgba(255, 255, 255, 1),
+      0 0 15px rgba(255, 200, 150, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+  }
+
+  /* General Glow */
+  .cosmic-glow {
+    background: radial-gradient(circle, rgba(255, 150, 50, 0.15) 0%, transparent 70%);
+  }
+
+
+}

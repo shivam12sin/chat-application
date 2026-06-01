@@ -1,0 +1,266 @@
+/* Aether — Strict Monochrome Liquid Glass Design Tokens */
+
+:root {
+  /* ===== BACKGROUND & SURFACES ===== */
+  --bg: #0b0b0b;
+  --bg-100: #111111;
+  --surface: rgba(255, 255, 255, 0.06);
+  --surface-2: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-highlight: rgba(255, 255, 255, 0.08);
+
+  /* ===== TEXT & CONTENT ===== */
+  --text: #ffffff;
+  --muted: #bdbdbd;
+
+  /* ===== INTERACTION ===== */
+  --focus-outline: 2px solid rgba(255, 255, 255, 0.30);
+
+  /* ===== SHADOWS & ELEVATION ===== */
+  --elevation-1: 0 4px 18px rgba(0, 0, 0, 0.6);
+  --elevation-2: 0 8px 36px rgba(0, 0, 0, 0.65);
+  --shadow-inner: inset 0 2px 4px rgba(255, 255, 255, 0.05);
+
+  /* ===== TYPOGRAPHY ===== */
+  --font-sans: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-size-xs: clamp(0.75rem, 1vw, 0.875rem);
+  --font-size-sm: clamp(0.875rem, 1.2vw, 1rem);
+  --font-size-base: clamp(1rem, 1.4vw, 1.125rem);
+  --font-size-lg: clamp(1.125rem, 1.6vw, 1.25rem);
+  --font-size-xl: clamp(1.25rem, 1.8vw, 1.5rem);
+
+  /* ===== MOTION & TRANSITIONS ===== */
+  --motion-fast: 120ms;
+  --motion-medium: 220ms;
+  --motion-ease: cubic-bezier(0.2, 0.9, 0.2, 1);
+
+  /* ===== GLASS MORPHISM ===== */
+  --glass-blur: 12px;
+  --glass-blur-light: 8px;
+  --glass-blur-strong: 16px;
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.10);
+
+  /* ===== METALLIC CHROME ===== */
+  --metal-rim: linear-gradient(135deg, #2a2a2a 0%, #5a5a5a 20%, #8a8a8a 40%, #ffffff 50%, #8a8a8a 60%, #5a5a5a 80%, #2a2a2a 100%);
+  --metal-inset: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  --metal-depth: 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+
+  /* Chromatic Aberration - Prismatic Edge */
+  --chromatic-edge: conic-gradient(from 200deg,
+      rgba(255, 100, 100, 0.6) 0deg,
+      rgba(100, 200, 255, 0.5) 60deg,
+      rgba(255, 220, 100, 0.5) 120deg,
+      rgba(100, 255, 150, 0.4) 180deg,
+      rgba(200, 100, 255, 0.5) 240deg,
+      rgba(255, 150, 100, 0.5) 300deg,
+      rgba(255, 100, 100, 0.6) 360deg);
+
+  /* ===== SPACING ===== */
+  --touch-target: 44px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 10ms;
+    --motion-medium: 10ms;
+    --motion-ease: cubic-bezier(0, 0, 1, 1);
+    --glass-blur: 0px;
+    --glass-blur-light: 0px;
+    --glass-blur-strong: 0px;
+  }
+}
+
+/* Dark mode (default) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+  :root {
+    --glass-border: rgba(255, 255, 255, 0.20);
+    --focus-outline: 2px solid rgba(255, 255, 255, 0.50);
+  }
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+/* ===== FOCUS VISIBLE (Keyboard Navigation) ===== */
+:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 2px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: var(--focus-outline);
+  outline-offset: 2px;
+}
+
+/* ===== SCROLL BAR ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: background var(--motion-medium) var(--motion-ease);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox */
+* {
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+  scrollbar-width: thin;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bloop {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulse-subtle {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* ===== UTILITY CLASSES ===== */
+.glass {
+  backdrop-filter: blur(var(--glass-blur));
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+}
+
+.glass-elevated {
+  backdrop-filter: blur(var(--glass-blur));
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow: var(--elevation-1);
+}
+
+.glass-highlight {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, transparent 100%);
+}
+
+.touch-target {
+  min-height: var(--touch-target);
+  min-width: var(--touch-target);
+}
+
+/* Smooth transitions for interactive elements */
+button,
+a,
+[role="button"],
+[role="tab"] {
+  transition: all var(--motion-medium) var(--motion-ease);
+}
+
+/* Visually hidden but accessible */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Reduce motion for animations */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

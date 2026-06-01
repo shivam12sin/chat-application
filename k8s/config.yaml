@@ -1,0 +1,75 @@
+# Chat Platform - ConfigMap and Secrets
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: chat-config
+data:
+  cors-origin: "https://chat.example.com"
+  log-level: "info"
+  node-env: "production"
+---
+# Secrets (base64 encoded - use kubectl create secret for actual values)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: chat-secrets
+type: Opaque
+data:
+  # These are placeholders - replace with actual base64 encoded values
+  # echo -n "your-value" | base64
+  database-url: cG9zdGdyZXNxbDovL3VzZXI6cGFzc0Bob3N0OjU0MzIvY2hhdF9kYg==
+  redis-url: cmVkaXM6Ly9yZWRpczozNjc3OQ==
+  jwt-secret: eW91ci1zdXBlci1zZWNyZXQtand0LWtleS1jaGFuZ2UtbWU=
+---
+# PersistentVolumeClaim for uploads
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: chat-uploads-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+---
+# Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: chat-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/websocket-services: "chat-api"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  tls:
+    - hosts:
+        - chat.example.com
+        - api.chat.example.com
+      secretName: chat-tls
+  rules:
+    - host: api.chat.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-api
+                port:
+                  number: 80
+    - host: chat.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chat-frontend
+                port:
+                  number: 80

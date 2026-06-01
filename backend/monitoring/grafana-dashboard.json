@@ -1,0 +1,179 @@
+{
+    "dashboard": {
+        "title": "Chat Platform - Overview",
+        "uid": "chat-platform-overview",
+        "tags": [
+            "chat",
+            "api"
+        ],
+        "timezone": "browser",
+        "refresh": "30s",
+        "panels": [
+            {
+                "title": "Request Rate",
+                "type": "graph",
+                "gridPos": {
+                    "x": 0,
+                    "y": 0,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total[5m])",
+                        "legendFormat": "{{method}} {{path}}"
+                    }
+                ]
+            },
+            {
+                "title": "Active WebSocket Connections",
+                "type": "stat",
+                "gridPos": {
+                    "x": 12,
+                    "y": 0,
+                    "w": 6,
+                    "h": 4
+                },
+                "targets": [
+                    {
+                        "expr": "websocket_connections_active",
+                        "legendFormat": "Connections"
+                    }
+                ]
+            },
+            {
+                "title": "Active Users",
+                "type": "stat",
+                "gridPos": {
+                    "x": 18,
+                    "y": 0,
+                    "w": 6,
+                    "h": 4
+                },
+                "targets": [
+                    {
+                        "expr": "active_users",
+                        "legendFormat": "Users"
+                    }
+                ]
+            },
+            {
+                "title": "Request Latency (P95)",
+                "type": "graph",
+                "gridPos": {
+                    "x": 0,
+                    "y": 8,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+                        "legendFormat": "{{path}}"
+                    }
+                ]
+            },
+            {
+                "title": "Messages Sent Rate",
+                "type": "graph",
+                "gridPos": {
+                    "x": 12,
+                    "y": 4,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "rate(messages_sent_total[5m])",
+                        "legendFormat": "{{room_type}} - {{message_type}}"
+                    }
+                ]
+            },
+            {
+                "title": "Error Rate",
+                "type": "graph",
+                "gridPos": {
+                    "x": 0,
+                    "y": 16,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total{status_code=~\"5..\"}[5m])",
+                        "legendFormat": "5xx Errors"
+                    },
+                    {
+                        "expr": "rate(http_requests_total{status_code=~\"4..\"}[5m])",
+                        "legendFormat": "4xx Errors"
+                    }
+                ]
+            },
+            {
+                "title": "Auth Events",
+                "type": "graph",
+                "gridPos": {
+                    "x": 12,
+                    "y": 16,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "rate(auth_events_total[5m])",
+                        "legendFormat": "{{event}} ({{success}})"
+                    }
+                ]
+            },
+            {
+                "title": "Database Query Latency",
+                "type": "graph",
+                "gridPos": {
+                    "x": 0,
+                    "y": 24,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "histogram_quantile(0.95, rate(db_query_duration_seconds_bucket[5m]))",
+                        "legendFormat": "{{operation}}"
+                    }
+                ]
+            },
+            {
+                "title": "Redis Cache Hit Rate",
+                "type": "stat",
+                "gridPos": {
+                    "x": 12,
+                    "y": 24,
+                    "w": 12,
+                    "h": 8
+                },
+                "targets": [
+                    {
+                        "expr": "rate(redis_cache_hits_total[5m]) / (rate(redis_cache_hits_total[5m]) + rate(redis_cache_misses_total[5m])) * 100",
+                        "legendFormat": "Hit Rate %"
+                    }
+                ]
+            }
+        ]
+    },
+    "alerts": [
+        {
+            "name": "High Error Rate",
+            "condition": "rate(http_requests_total{status_code=~\"5..\"}[5m]) > 0.01",
+            "severity": "critical"
+        },
+        {
+            "name": "High Latency",
+            "condition": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 0.5",
+            "severity": "warning"
+        },
+        {
+            "name": "WebSocket Drops",
+            "condition": "rate(websocket_disconnections_total[5m]) > 10",
+            "severity": "warning"
+        }
+    ]
+}

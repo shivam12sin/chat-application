@@ -1,0 +1,184 @@
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: chat_postgres
+    environment:
+      POSTGRES_DB: chat_platform
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chat_network
+
+  # ============================================
+  # Redis (for Pub/Sub and caching)
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: chat_redis
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - chat_network
+
+  # ============================================
+  # Elasticsearch (for industrial-scale search)
+  # ============================================
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: chat_elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - chat_network
+
+  # ============================================
+  # Backend (Node.js + Socket.io + Redis Adapter)
+  # Scale with: docker-compose scale backend=4
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: chat_platform
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_POOL_MIN: 5
+      DB_POOL_MAX: 20
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: your-production-secret-change-this
+      JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: http://localhost,http://localhost:5173
+      CONNECTION_RATE_LIMIT_MAX: 100
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - chat_network
+    # Note: Don't expose ports directly - use nginx load balancer
+
+    # ============================================
+    # NGINX Load Balancer (for backend instances)
+    # Enables horizontal scaling demonstration
+    # ============================================
+  nginx:
+    image: nginx:alpine
+    container_name: chat_nginx
+    ports:
+      - "3000:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    depends_on:
+      - backend
+    networks:
+      - chat_network
+
+  # ============================================
+  # Frontend (React + Vite)
+  # ============================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - chat_network
+    depends_on:
+      - backend
+
+  # ============================================
+  # Coturn (TURN/STUN Server)
+  # ============================================
+  coturn:
+    image: coturn/coturn
+    container_name: chat_coturn
+    restart: always
+    ports:
+      - "3478:3478/tcp"
+      - "3478:3478/udp"
+      - "5349:5349/tcp"
+      - "5349:5349/udp"
+    environment:
+      - TURNSERVER_REALM=localhost
+      - TURNSERVER_USER=user:password
+      # In production, EXTERNAL_IP needs to be the public IP
+      # - EXTERNAL_IP=$(detect_external_ip) 
+    command:
+      - -n
+      - --log-file=stdout
+      - --min-port=49152
+      - --max-port=65535
+    networks:
+      - chat_network
+
+volumes:
+  postgres_data:
+  redis_data:
+  es_data:
+
+
+networks:
+  chat_network:
+    driver: bridge
+
+# ============================================
+# Usage Instructions
+# ============================================
+#
+# Start all services:
+#   docker-compose up -d
+#
+# Scale backend to 4 instances (horizontal scaling test):
+#   docker-compose up -d --scale backend=4
+#
+# View logs:
+#   docker-compose logs -f backend
+#
+# Stop all services:
+#   docker-compose down
+#
+# Stop and remove volumes:
+#   docker-compose down -v
+#

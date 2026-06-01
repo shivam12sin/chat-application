@@ -1,0 +1,50 @@
+config:
+  target: "http://localhost:3000"
+  phases:
+    - duration: 30
+      arrivalRate: 5
+      name: "Warm up (5 users/sec)"
+    - duration: 60
+      arrivalRate: 20
+      rampTo: 50
+      name: "Ramp up load (20-50 users/sec)"
+    - duration: 60
+      arrivalRate: 50
+      name: "Sustained high load (50 users/sec)"
+  engines:
+    socketio:
+      transports: ["websocket"]
+      upgrade: false
+      autoConnect: false
+      query:
+        token: "{{ token }}"
+  processor: "./load-test-processor.js"
+scenarios:
+  - name: "Chat Flow"
+    engine: "socketio"
+    beforeScenario: "beforeScenario"
+    flow:
+      # connect explicitly after beforeScenario sets `token` and include token in handshake auth
+      - socketio:
+          connect:
+            auth:
+              token: "{{ token }}"
+      # 1. Connect (handled automatically by engine)
+      - think: 1
+      
+      # 2. Join room
+      - emit:
+          channel: "room:join"
+          data: 
+            roomId: 1
+      
+      # 4. Send messages
+      - loop:
+        - think: 1
+        - emit:
+            channel: "message:send"
+            data:
+              room_id: 1
+              content: "Load test message {{ $randomString() }}"
+              tempId: "{{ $uuid() }}"
+        count: 5
