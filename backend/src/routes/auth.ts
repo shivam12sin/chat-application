@@ -573,7 +573,7 @@ router.delete('/me', authenticateTokenHTTP, async (req: Request, res: Response) 
  */
 router.put('/profile', authenticateTokenHTTP, async (req: Request, res: Response) => {
   try {
-    const userId = (req as any).user.id;
+    const userId = (req as any).user.userId;
     const { avatar_url, display_name } = req.body;
 
     if (!avatar_url && !display_name) {
@@ -611,13 +611,13 @@ router.put('/profile', authenticateTokenHTTP, async (req: Request, res: Response
       return res.status(404).json({ error: 'User not found' });
     }
 
-    res.json({
+    return res.json({
       success: true,
       user: result.rows[0],
     });
   } catch (error) {
     console.error('Profile update error:', error);
-    res.status(500).json({ error: 'Failed to update profile' });
+    return res.status(500).json({ error: 'Failed to update profile' });
   }
 });
 

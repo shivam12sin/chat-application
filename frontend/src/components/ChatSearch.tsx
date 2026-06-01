@@ -48,7 +48,7 @@ const ChatSearch: React.FC<ChatSearchProps> = ({
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [showRecent, setShowRecent] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const debounceRef = useRef<any>();
 
   // Load recent searches on mount
   useEffect(() => {

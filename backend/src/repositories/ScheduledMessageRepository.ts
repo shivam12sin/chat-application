@@ -14,6 +14,43 @@ export interface ScheduledMessage {
 
 export class ScheduledMessageRepository {
   /**
+   * Initialize table and types if not exists
+   */
+  static async initTable(): Promise<void> {
+    // Create type if not exists
+    await Database.query(`
+      DO $$
+      BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'scheduled_message_status') THEN
+              CREATE TYPE scheduled_message_status AS ENUM ('pending', 'processing', 'sent', 'failed', 'cancelled');
+          END IF;
+      END$$;
+    `);
+
+    // Create table if not exists
+    await Database.query(`
+      CREATE TABLE IF NOT EXISTS scheduled_messages (
+          id UUID PRIMARY KEY,
+          content TEXT,
+          room_id INTEGER NOT NULL REFERENCES rooms(id) ON DELETE CASCADE,
+          sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+          media_url TEXT,
+          scheduled_at TIMESTAMP WITH TIME ZONE NOT NULL,
+          status scheduled_message_status NOT NULL DEFAULT 'pending',
+          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+          failure_reason TEXT
+      )
+    `);
+
+    // Create index if not exists
+    await Database.query(`
+      CREATE INDEX IF NOT EXISTS idx_scheduled_messages_polling 
+      ON scheduled_messages (status, scheduled_at) 
+      WHERE status = 'pending'
+    `);
+  }
+
+  /**
    * Schedule a new message
    */
   static async scheduleMessage(

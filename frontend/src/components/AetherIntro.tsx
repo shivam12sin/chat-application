@@ -68,8 +68,8 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
   const [rgbSplit, setRgbSplit] = useState(0);
   const [logoBrightness, setLogoBrightness] = useState(10); // Start pure white
   const [logoVisible, setLogoVisible] = useState(false); // Logo fades in during void
-  const glitchIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const brightnessIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const glitchIntervalRef = useRef<any | null>(null);
+  const brightnessIntervalRef = useRef<any | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Generate random glitch offsets and gradually decrease brightness during corruption
@@ -113,7 +113,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
 
   // Stage progression
   useEffect(() => {
-    const timers: NodeJS.Timeout[] = [];
+    const timers: any[] = [];
 
     // Fade in logo after a brief delay (during void)
     timers.push(

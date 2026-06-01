@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { AppError, ValidationError } from '../utils/errors';
 import { logError } from '../config/logger';
+import crypto from 'crypto';
 
 /**
  * Standardized error response format

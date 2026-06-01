@@ -151,12 +151,40 @@ async function startServer() {
     console.log('Database connected');
 
     // Initialize reactions table
-    await ReactionRepository.initTable();
-    console.log('Reactions table initialized');
+    try {
+      await ReactionRepository.initTable();
+      console.log('Reactions table initialized');
+    } catch (err: any) {
+      if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
+        console.log('Reactions table already initialized or being initialized concurrently');
+      } else {
+        throw err;
+      }
+    }
 
     // Initialize message delete tables
-    await MessageDeleteRepository.initTables();
-    console.log('Message delete tables initialized');
+    try {
+      await MessageDeleteRepository.initTables();
+      console.log('Message delete tables initialized');
+    } catch (err: any) {
+      if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
+        console.log('Message delete tables already initialized or being initialized concurrently');
+      } else {
+        throw err;
+      }
+    }
+
+    // Initialize scheduled messages table
+    try {
+      await ScheduledMessageRepository.initTable();
+      console.log('Scheduled messages table initialized');
+    } catch (err: any) {
+      if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
+        console.log('Scheduled messages table already initialized or being initialized concurrently');
+      } else {
+        throw err;
+      }
+    }
 
     // Test Redis connection
     const redisHealthy = await RedisService.healthCheck();
