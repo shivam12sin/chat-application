@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import logoSvg from "../assets/logo.svg";
 
 interface AetherIntroProps {
   onComplete: () => void;
@@ -68,8 +69,10 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
   const [rgbSplit, setRgbSplit] = useState(0);
   const [logoBrightness, setLogoBrightness] = useState(10); // Start pure white
   const [logoVisible, setLogoVisible] = useState(false); // Logo fades in during void
-  const glitchIntervalRef = useRef<any | null>(null);
-  const brightnessIntervalRef = useRef<any | null>(null);
+  const glitchIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const brightnessIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Generate random glitch offsets and gradually decrease brightness during corruption
@@ -113,7 +116,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
 
   // Stage progression
   useEffect(() => {
-    const timers: any[] = [];
+    const timers: ReturnType<typeof setTimeout>[] = [];
 
     // Fade in logo after a brief delay (during void)
     timers.push(
@@ -221,7 +224,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
         {/* RGB Split Red Channel */}
         {stage === "corruption" && (
           <motion.img
-            src="/src/assets/logo.svg"
+            src={logoSvg}
             alt=""
             className="absolute"
             style={{
@@ -238,7 +241,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
         {/* RGB Split Blue Channel */}
         {stage === "corruption" && (
           <motion.img
-            src="/src/assets/logo.svg"
+            src={logoSvg}
             alt=""
             className="absolute"
             style={{
@@ -254,7 +257,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
 
         {/* Main Logo - brightness controlled by logoBrightness state */}
         <motion.img
-          src="/src/assets/logo.svg"
+          src={logoSvg}
           alt="Aether"
           className="relative"
           style={{
@@ -291,7 +294,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
               }}
             >
               <img
-                src="/src/assets/logo.svg"
+                src={logoSvg}
                 alt=""
                 style={{
                   width: LOGO_WIDTH,
@@ -316,7 +319,7 @@ const AetherIntro: React.FC<AetherIntroProps> = ({ onComplete }) => {
               }}
             >
               <img
-                src="/src/assets/logo.svg"
+                src={logoSvg}
                 alt=""
                 style={{
                   width: LOGO_WIDTH,
