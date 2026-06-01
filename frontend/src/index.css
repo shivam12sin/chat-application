@@ -20,15 +20,20 @@
   body {
     @apply bg-black text-mono-text font-sans antialiased;
     overflow: hidden;
-    /* Use dynamic viewport height to account for mobile browser chrome */
+    /* Mobile browser chrome fix: dvh adjusts for address bar, vh does not */
+    /* IMPORTANT: vh must come FIRST as fallback, dvh must come LAST to override */
+    height: 100vh;
     height: 100dvh;
-    height: 100vh; /* Fallback for browsers that don't support dvh */
+    /* JS sets --dvh as ultimate fallback via visualViewport API */
+    height: calc(var(--dvh, 1dvh) * 100);
   }
 
-  /* Fix viewport height on mobile browsers (e.g., Chrome Android address bar) */
+  /* Fix h-screen Tailwind class for mobile browsers */
   .h-screen {
-    height: 100dvh !important;
-    height: 100vh !important; /* Fallback */
+    /* IMPORTANT: correct cascade order - dvh MUST be last to override vh */
+    height: 100vh;
+    height: 100dvh;
+    height: calc(var(--dvh, 1dvh) * 100);
   }
 
   /* Safe area inset for iPhone notch/home bar */
