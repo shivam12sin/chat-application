@@ -1,10 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import Database from './database';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-const execAsync = promisify(exec);
+import migrationRunner from 'node-pg-migrate';
 
 function getDbConnectionString(): string {
   if (process.env.DATABASE_URL) {
@@ -92,49 +89,54 @@ export async function initializeDatabase(): Promise<void> {
     throw error;
   }
 
-  // 2. Run pending JS migrations using node-pg-migrate
+  // 2. Run pending JS migrations programmatically
   try {
     console.log(
       'Database Initializer: Checking for pending JS migrations managed by node-pg-migrate...'
     );
 
-    // Ensure DATABASE_URL is set so node-pg-migrate can connect
+    // Parse and set environment variables on process.env so the individual JS migration files can read them
     const databaseUrl = getDbConnectionString();
-    const env: Record<string, string | undefined> = {
-      ...process.env,
-      DATABASE_URL: databaseUrl,
-    };
-
-    // Parse DATABASE_URL into individual components to support E2E migrations that bypass node-pg-migrate's pool
     const parsedParams = parseConnectionString(databaseUrl);
     if (parsedParams) {
-      env.DB_USER = parsedParams.user;
-      env.DB_PASSWORD = parsedParams.password;
-      env.DB_HOST = parsedParams.host;
-      env.DB_PORT = parsedParams.port;
-      env.DB_NAME = parsedParams.database;
+      process.env.DB_USER = parsedParams.user;
+      process.env.DB_PASSWORD = parsedParams.password;
+      process.env.DB_HOST = parsedParams.host;
+      process.env.DB_PORT = parsedParams.port;
+      process.env.DB_NAME = parsedParams.database;
     }
 
-    // If DATABASE_URL is present (e.g. on Render), enforce SSL and bypass self-signed certificate validation
     if (process.env.DATABASE_URL) {
-      env.PGSSLMODE = 'require';
-      env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      process.env.PGSSLMODE = 'require';
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     }
 
-    console.log('Database Initializer: Spawning "npx node-pg-migrate up"...');
-    // Run npx node-pg-migrate up in the application directory
-    const { stdout, stderr } = await execAsync('npx node-pg-migrate up', {
-      cwd: process.cwd(),
-      env,
+    // Configure the ClientConfig for node-pg-migrate
+    const dbConfig = process.env.DATABASE_URL
+      ? {
+          connectionString: process.env.DATABASE_URL,
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        }
+      : {
+          host: process.env.DB_HOST || 'localhost',
+          port: parseInt(process.env.DB_PORT || '5432'),
+          database: process.env.DB_NAME || 'chat_platform',
+          user: process.env.DB_USER || 'postgres',
+          password: process.env.DB_PASSWORD || 'postgres',
+        };
+
+    console.log('Database Initializer: Calling node-pg-migrate runner programmatically...');
+    await migrationRunner({
+      databaseUrl: dbConfig,
+      dir: path.join(process.cwd(), 'migrations'),
+      direction: 'up',
+      migrationsTable: 'pgmigrations',
+      verbose: true,
     });
 
-    if (stdout && stdout.trim()) {
-      console.log('Database Initializer: node-pg-migrate stdout:\n', stdout);
-    }
-    if (stderr && stderr.trim()) {
-      console.warn('Database Initializer: node-pg-migrate stderr:\n', stderr);
-    }
-    console.log('Database Initializer: ✓ All JS migrations checked and applied.');
+    console.log('Database Initializer: ✓ All JS migrations checked and applied programmatically.');
   } catch (error) {
     console.error('Database Initializer: ERROR running JS migrations:', error);
     throw error;
