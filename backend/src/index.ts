@@ -135,9 +135,11 @@ import { ReactionRepository } from './repositories/ReactionRepository';
 import { MessageDeleteRepository } from './repositories/MessageDeleteRepository';
 import { ScheduledMessageRepository } from './repositories/ScheduledMessageRepository';
 import { initializeElasticsearchIndex } from './config/elasticsearch';
+import { initializeDatabase } from './config/initializer';
 
 // Declare global io
 declare global {
+  // eslint-disable-next-line no-var
   var io: any;
 }
 
@@ -149,6 +151,9 @@ async function startServer() {
       throw new Error('Database connection failed');
     }
     console.log('Database connected');
+
+    // Run database initializer (creates base schema, SQL migrations, and JS migrations)
+    await initializeDatabase();
 
     // Initialize reactions table
     try {
@@ -180,7 +185,9 @@ async function startServer() {
       console.log('Scheduled messages table initialized');
     } catch (err: any) {
       if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
-        console.log('Scheduled messages table already initialized or being initialized concurrently');
+        console.log(
+          'Scheduled messages table already initialized or being initialized concurrently'
+        );
       } else {
         throw err;
       }
