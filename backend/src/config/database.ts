@@ -5,28 +5,31 @@ dotenv.config();
 
 // PostgreSQL Connection Pool Configuration
 // Optimized for high concurrency (10k WebSocket connections)
-const poolConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  database: process.env.DB_NAME || 'chat_platform',
-  user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-
-  // Connection pool settings for high-scale
-  min: parseInt(process.env.DB_POOL_MIN || '5'),
-  max: parseInt(process.env.DB_POOL_MAX || '50'), // Limit to prevent DB overload
-
-  // Connection lifecycle
-  idleTimeoutMillis: 30000, // Close idle connections after 30s
-  connectionTimeoutMillis: 2000, // Fail fast if can't connect
-
-  // Keep connections alive
-  keepAlive: true,
-  keepAliveInitialDelayMillis: 10000,
-
-  // Statement timeout to prevent long-running queries
-  statement_timeout: 10000, // 10 seconds max per query
-};
+const poolConfig = process.env.DATABASE_URL
+  ? {
+      connectionString: process.env.DATABASE_URL,
+      min: parseInt(process.env.DB_POOL_MIN || '5'),
+      max: parseInt(process.env.DB_POOL_MAX || '50'),
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+      keepAlive: true,
+      keepAliveInitialDelayMillis: 10000,
+      statement_timeout: 10000,
+    }
+  : {
+      host: process.env.DB_HOST || 'localhost',
+      port: parseInt(process.env.DB_PORT || '5432'),
+      database: process.env.DB_NAME || 'chat_platform',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      min: parseInt(process.env.DB_POOL_MIN || '5'),
+      max: parseInt(process.env.DB_POOL_MAX || '50'),
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+      keepAlive: true,
+      keepAliveInitialDelayMillis: 10000,
+      statement_timeout: 10000,
+    };
 
 class Database {
   private static instance: Database;
