@@ -84,10 +84,16 @@ export async function initializeDatabase(): Promise<void> {
 
     // Ensure DATABASE_URL is set so node-pg-migrate can connect
     const databaseUrl = getDbConnectionString();
-    const env = {
+    const env: Record<string, string | undefined> = {
       ...process.env,
       DATABASE_URL: databaseUrl,
     };
+
+    // If DATABASE_URL is present (e.g. on Render), enforce SSL and bypass self-signed certificate validation
+    if (process.env.DATABASE_URL) {
+      env.PGSSLMODE = 'require';
+      env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+    }
 
     console.log('Database Initializer: Spawning "npx node-pg-migrate up"...');
     // Run npx node-pg-migrate up in the application directory
