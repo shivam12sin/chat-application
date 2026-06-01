@@ -29,13 +29,19 @@ const redisConfig = {
 };
 
 // Main Redis client for general operations (caching, session management)
-export const redisClient = new Redis(redisConfig);
+export const redisClient = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL)
+  : new Redis(redisConfig);
 
 // Pub client for Socket.io Redis Adapter
-export const redisPubClient = new Redis(redisConfig);
+export const redisPubClient = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL)
+  : new Redis(redisConfig);
 
 // Sub client for Socket.io Redis Adapter
-export const redisSubClient = new Redis(redisConfig);
+export const redisSubClient = process.env.REDIS_URL
+  ? new Redis(process.env.REDIS_URL)
+  : new Redis(redisConfig);
 
 // Error handling
 redisClient.on('error', err => {

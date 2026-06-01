@@ -8,6 +8,9 @@ dotenv.config();
 const poolConfig = process.env.DATABASE_URL
   ? {
       connectionString: process.env.DATABASE_URL,
+      ssl: {
+        rejectUnauthorized: false,
+      },
       min: parseInt(process.env.DB_POOL_MIN || '5'),
       max: parseInt(process.env.DB_POOL_MAX || '50'),
       idleTimeoutMillis: 30000,
