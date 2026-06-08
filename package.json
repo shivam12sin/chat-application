@@ -10,7 +10,6 @@
   "devDependencies": {
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
-    "cross-env": "^10.1.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7"
   },
@@ -23,12 +22,12 @@
   },
   "lint-staged": {
     "backend/src/**/*.ts": [
-      "cross-env ESLINT_USE_FLAT_CONFIG=true npx --prefix backend eslint --config backend/eslint.config.mjs --fix",
-      "npx --prefix backend prettier --write"
+      "cd backend && npx eslint --fix",
+      "cd backend && npx prettier --write"
     ],
     "frontend/src/**/*.{ts,tsx}": [
-      "npx --prefix frontend eslint --config frontend/.eslintrc.json --fix",
-      "npx --prefix frontend prettier --write"
+      "cd frontend && npx eslint --fix",
+      "cd frontend && npx prettier --write"
     ]
   }
 }

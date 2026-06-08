@@ -28,17 +28,13 @@ async function createClient(name) {
         password
     });
 
-    const token = loginRes.data.accessToken || loginRes.data.token;
+    const token = loginRes.data.token;
     const user = loginRes.data.user;
 
     const socket = io(SOCKET_URL, {
         auth: { token },
         transports: ['websocket'],
         reconnection: false
-    });
-
-    socket.on('error', (err) => {
-        console.error(`[${name}] Socket error event:`, err);
     });
 
     await new Promise((resolve, reject) => {

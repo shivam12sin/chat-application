@@ -45,16 +45,14 @@ async function down() {
 }
 
 // Run migration
-if (require.main === module) {
-    up()
-        .then(() => {
-            console.log('✓ Member alias migration completed');
-            process.exit(0);
-        })
-        .catch((error) => {
-            console.error('Migration failed:', error);
-            process.exit(1);
-        });
-}
+up()
+    .then(() => {
+        console.log('✓ Member alias migration completed');
+        process.exit(0);
+    })
+    .catch((error) => {
+        console.error('Migration failed:', error);
+        process.exit(1);
+    });
 
 module.exports = { up, down };

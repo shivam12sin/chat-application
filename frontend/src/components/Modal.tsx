@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn, createFocusTrap, focusElement } from "../utils/theme";
-import ChromeButton from "./ChromeButton";
+import React, { useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn, createFocusTrap, focusElement } from '../utils/theme';
+import ChromeButton from './ChromeButton';
 
 interface ModalProps {
   isOpen: boolean;
@@ -22,8 +22,8 @@ const Modal: React.FC<ModalProps> = ({
   children,
   onClose,
   onConfirm,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   isDestructive = false,
   className,
   contentClassName,
@@ -38,12 +38,12 @@ const Modal: React.FC<ModalProps> = ({
     const { firstElement, lastElement } = createFocusTrap(contentRef.current);
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
       }
 
-      if (e.key === "Tab") {
+      if (e.key === 'Tab') {
         if (e.shiftKey) {
           if (document.activeElement === firstElement) {
             e.preventDefault();
@@ -64,14 +64,14 @@ const Modal: React.FC<ModalProps> = ({
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    modalRef.current?.addEventListener("click", handleBackdropClick);
+    document.addEventListener('keydown', handleKeyDown);
+    modalRef.current?.addEventListener('click', handleBackdropClick);
 
     focusElement(firstElement as HTMLElement, 100);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      modalRef.current?.removeEventListener("click", handleBackdropClick);
+      document.removeEventListener('keydown', handleKeyDown);
+      modalRef.current?.removeEventListener('click', handleBackdropClick);
     };
   }, [isOpen, onClose]);
 
@@ -88,10 +88,10 @@ const Modal: React.FC<ModalProps> = ({
           transition={{ duration: 0.2 }}
           ref={modalRef}
           className={cn(
-            "fixed inset-0 z-50",
-            "bg-mono-bg/80 backdrop-blur-glass",
-            "flex items-center justify-center",
-            "p-4",
+            'fixed inset-0 z-50',
+            'bg-mono-bg/80 backdrop-blur-glass',
+            'flex items-center justify-center',
+            'p-4'
           )}
           role="presentation"
           aria-hidden="false"
@@ -106,11 +106,11 @@ const Modal: React.FC<ModalProps> = ({
             transition={{ duration: 0.3, ease: [0.2, 0.9, 0.2, 1] }}
             ref={contentRef}
             className={cn(
-              "relative w-full max-w-md",
-              "rounded-glass",
-              "bg-mono-surface border border-mono-glass-border",
-              "shadow-glass",
-              className,
+              'relative w-full max-w-md',
+              'rounded-glass',
+              'bg-mono-surface border border-mono-glass-border',
+              'shadow-glass',
+              className
             )}
             role="alertdialog"
             aria-modal="true"
@@ -152,9 +152,9 @@ const Modal: React.FC<ModalProps> = ({
             <div
               id="modal-description"
               className={cn(
-                "px-6 py-4",
-                "text-sm text-mono-text",
-                contentClassName,
+                'px-6 py-4',
+                'text-sm text-mono-text',
+                contentClassName
               )}
             >
               {children}
@@ -174,8 +174,8 @@ const Modal: React.FC<ModalProps> = ({
                   <ChromeButton
                     onClick={onConfirm}
                     className={cn(
-                      "px-4 py-2 text-sm font-medium min-h-[40px]",
-                      isDestructive && "text-red-400 hover:text-red-300",
+                      'px-4 py-2 text-sm font-medium min-h-[40px]',
+                      isDestructive && 'text-red-400 hover:text-red-300'
                     )}
                   >
                     {confirmText}

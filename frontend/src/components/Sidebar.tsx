@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn, SPACE_TONES } from "../utils/theme";
-import { MessageSquare, UserPlus, Users, Menu, Plus, Lock } from "lucide-react";
-import ChromeButton from "./ChromeButton";
-import SettingsMenu from "./SettingsMenu";
-import Avatar from "./Avatar";
-import CreateSpaceModal from "./CreateSpaceModal";
-import ConstellationModal from "./ConstellationModal";
-import SearchUsers from "./Connect/SearchUsers";
-import RequestList from "./Connect/RequestList";
-import AetherLogo from "./AetherLogo";
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn, SPACE_TONES } from '../utils/theme';
+import { MessageSquare, UserPlus, Users, Menu, Plus, Lock } from 'lucide-react';
+import ChromeButton from './ChromeButton';
+import SettingsMenu from './SettingsMenu';
+import Avatar from './Avatar';
+import CreateSpaceModal from './CreateSpaceModal';
+import ConstellationModal from './ConstellationModal';
+import SearchUsers from './Connect/SearchUsers';
+import RequestList from './Connect/RequestList';
+import AetherLogo from './AetherLogo';
 
 interface Room {
   id: string;
@@ -20,7 +20,7 @@ interface Room {
   timestamp?: string;
   isOnline?: boolean;
   isMuted?: boolean;
-  room_type?: "direct" | "group";
+  room_type?: 'direct' | 'group';
   tone?: string;
 }
 
@@ -54,18 +54,16 @@ const Sidebar: React.FC<SidebarProps> = ({
   onUpdateProfile,
   className,
 }) => {
-  const [activeTab, setActiveTab] = useState<"chats" | "search" | "requests">(
-    "chats",
-  );
+  const [activeTab, setActiveTab] = useState<'chats' | 'search' | 'requests'>('chats');
   const [isCreateSpaceOpen, setIsCreateSpaceOpen] = useState(false);
   const [isConstellationOpen, setIsConstellationOpen] = useState(false);
 
   return (
     <nav
       className={cn(
-        "flex flex-col h-full w-full bg-mono-bg",
-        "border-r border-mono-glass-border",
-        className,
+        'flex flex-col h-full w-full bg-mono-bg',
+        'border-r border-mono-glass-border',
+        className
       )}
       role="navigation"
       aria-label="Sidebar"
@@ -87,36 +85,36 @@ const Sidebar: React.FC<SidebarProps> = ({
         {/* Tabs */}
         <div className="flex p-1 bg-[#2a2a2c] rounded-2xl">
           <button
-            onClick={() => setActiveTab("chats")}
+            onClick={() => setActiveTab('chats')}
             className={cn(
-              "flex-1 flex items-center justify-center py-1.5 px-4 rounded-xl text-xs font-medium transition-all duration-200 z-10",
-              activeTab === "chats"
-                ? "bg-[#1a1a1c] text-mono-text shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-                : "text-mono-muted hover:text-mono-text",
+              'flex-1 flex items-center justify-center py-1.5 px-4 rounded-xl text-xs font-medium transition-all duration-200 z-10',
+              activeTab === 'chats'
+                ? 'bg-[#1a1a1c] text-mono-text shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]'
+                : 'text-mono-muted hover:text-mono-text'
             )}
             title="Chats"
           >
             <MessageSquare className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setActiveTab("requests")}
+            onClick={() => setActiveTab('requests')}
             className={cn(
-              "flex-1 flex items-center justify-center py-1.5 px-4 rounded-xl text-xs font-medium transition-all duration-200 z-10",
-              activeTab === "requests"
-                ? "bg-[#1a1a1c] text-mono-text shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-                : "text-mono-muted hover:text-mono-text",
+              'flex-1 flex items-center justify-center py-1.5 px-4 rounded-xl text-xs font-medium transition-all duration-200 z-10',
+              activeTab === 'requests'
+                ? 'bg-[#1a1a1c] text-mono-text shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]'
+                : 'text-mono-muted hover:text-mono-text'
             )}
             title="Requests"
           >
             <Users className="w-4 h-4" />
           </button>
           <button
-            onClick={() => setActiveTab("search")}
+            onClick={() => setActiveTab('search')}
             className={cn(
-              "flex-1 flex items-center justify-center py-1.5 px-4 rounded-xl text-xs font-medium transition-all duration-200 z-10",
-              activeTab === "search"
-                ? "bg-[#1a1a1c] text-mono-text shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
-                : "text-mono-muted hover:text-mono-text",
+              'flex-1 flex items-center justify-center py-1.5 px-4 rounded-xl text-xs font-medium transition-all duration-200 z-10',
+              activeTab === 'search'
+                ? 'bg-[#1a1a1c] text-mono-text shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]'
+                : 'text-mono-muted hover:text-mono-text'
             )}
             title="Find Users"
           >
@@ -128,7 +126,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Content */}
       <div className="flex-1 overflow-y-auto min-h-0 relative">
         <AnimatePresence mode="wait">
-          {activeTab === "chats" && (
+          {activeTab === 'chats' && (
             <motion.div
               key="chats"
               initial={{ opacity: 0 }}
@@ -141,11 +139,9 @@ const Sidebar: React.FC<SidebarProps> = ({
                 {rooms.length === 0 ? (
                   <li className="flex items-center justify-center h-full p-4">
                     <div className="text-center">
-                      <p className="text-mono-muted text-sm mb-3">
-                        No chats yet
-                      </p>
+                      <p className="text-mono-muted text-sm mb-3">No chats yet</p>
                       <button
-                        onClick={() => setActiveTab("search")}
+                        onClick={() => setActiveTab('search')}
                         className="text-accent-primary hover:text-accent-primary-hover text-sm font-medium"
                       >
                         Find someone to chat with
@@ -156,9 +152,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   <>
                     {/* Header with Create Space */}
                     <div className="px-5 py-2 flex items-center justify-between group mt-2">
-                      <span className="text-[10px] font-bold text-mono-muted tracking-widest uppercase">
-                        Conversations
-                      </span>
+                      <span className="text-[10px] font-bold text-mono-muted tracking-widest uppercase">Conversations</span>
                       <button
                         onClick={() => setIsCreateSpaceOpen(true)}
                         className="p-1 rounded-md text-mono-muted hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-all"
@@ -169,9 +163,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                     </div>
 
                     {rooms.map((room) => {
-                      const isLocked = lockedRoomIds.includes(
-                        parseInt(room.id),
-                      );
+                      const isLocked = lockedRoomIds.includes(parseInt(room.id));
                       return (
                         <li key={room.id} role="listitem">
                           <button
@@ -183,121 +175,72 @@ const Sidebar: React.FC<SidebarProps> = ({
                               }
                             }}
                             className={cn(
-                              "w-[calc(100%-16px)] px-3 py-2 m-2 mt-0 mb-1 rounded-glass block relative",
-                              "transition-all duration-normal ease-glass",
-                              "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-mono-text/50",
+                              'w-[calc(100%-16px)] px-3 py-2 m-2 mt-0 mb-1 rounded-glass block relative',
+                              'transition-all duration-normal ease-glass',
+                              'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-mono-text/50',
                               selectedRoomId === room.id
-                                ? "bg-mono-surface border border-mono-glass-highlight shadow-glass-sm"
-                                : "hover:bg-mono-surface/40 border border-transparent hover:border-mono-glass-border",
-                              "active:scale-98",
-                              "min-h-[64px] flex items-center gap-3",
+                                ? 'bg-mono-surface border border-mono-glass-highlight shadow-glass-sm'
+                                : 'hover:bg-mono-surface/40 border border-transparent hover:border-mono-glass-border',
+                              'active:scale-98',
+                              'min-h-[64px] flex items-center gap-3',
                               // Tone-specific subtle background if selected
-                              selectedRoomId === room.id &&
-                                room.tone &&
-                                SPACE_TONES[room.tone]
-                                ? SPACE_TONES[room.tone].bg.replace("/5", "/10")
-                                : "",
+                              selectedRoomId === room.id && room.tone && SPACE_TONES[room.tone]
+                                ? SPACE_TONES[room.tone].bg.replace('/5', '/10')
+                                : ''
                             )}
                           >
-                            <div
-                              className={cn(
-                                "flex-shrink-0 relative",
-                                room.room_type === "group"
-                                  ? "rounded-lg"
-                                  : "rounded-full",
-                              )}
-                            >
+                            <div className={cn(
+                              "flex-shrink-0 relative",
+                              room.room_type === 'group' ? "rounded-lg" : "rounded-full"
+                            )}>
                               <Avatar
                                 src={room.avatar}
                                 name={room.name}
                                 size="lg"
                                 isOnline={room.isOnline}
                                 className={cn(
-                                  room.room_type === "group"
-                                    ? "rounded-lg"
-                                    : "",
-                                  room.tone && SPACE_TONES[room.tone]
-                                    ? SPACE_TONES[room.tone].border
-                                    : "",
+                                  room.room_type === 'group' ? "rounded-lg" : "",
+                                  room.tone && SPACE_TONES[room.tone] ? SPACE_TONES[room.tone].border : ''
                                 )}
                               />
                               {/* Soft Presence Pulse for Spaces */}
-                              {room.room_type === "group" &&
-                                room.tone &&
-                                SPACE_TONES[room.tone] &&
-                                (room.unread > 0 || room.isOnline) && (
-                                  <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
-                                    <span
-                                      className={cn(
-                                        "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
-                                        room.tone === "social"
-                                          ? "bg-blue-400"
-                                          : room.tone === "focus"
-                                            ? "bg-purple-400"
-                                            : room.tone === "work"
-                                              ? "bg-amber-400"
-                                              : "bg-emerald-400",
-                                      )}
-                                    ></span>
-                                    <span
-                                      className={cn(
-                                        "relative inline-flex rounded-full h-3 w-3 border-2 border-mono-bg",
-                                        room.tone === "social"
-                                          ? "bg-blue-500"
-                                          : room.tone === "focus"
-                                            ? "bg-purple-500"
-                                            : room.tone === "work"
-                                              ? "bg-amber-500"
-                                              : "bg-emerald-500",
-                                      )}
-                                    ></span>
-                                  </span>
-                                )}
+                              {room.room_type === 'group' && room.tone && SPACE_TONES[room.tone] && (room.unread > 0 || room.isOnline) && (
+                                <span className="absolute -bottom-1 -right-1 flex h-3 w-3">
+                                  <span className={cn(
+                                    "animate-ping absolute inline-flex h-full w-full rounded-full opacity-75",
+                                    room.tone === 'social' ? 'bg-blue-400' :
+                                      room.tone === 'focus' ? 'bg-purple-400' :
+                                        room.tone === 'work' ? 'bg-amber-400' : 'bg-emerald-400'
+                                  )}></span>
+                                  <span className={cn(
+                                    "relative inline-flex rounded-full h-3 w-3 border-2 border-mono-bg",
+                                    room.tone === 'social' ? 'bg-blue-500' :
+                                      room.tone === 'focus' ? 'bg-purple-500' :
+                                        room.tone === 'work' ? 'bg-amber-500' : 'bg-emerald-500'
+                                  )}></span>
+                                </span>
+                              )}
                             </div>
 
                             <div className="flex-1 min-w-0 text-left">
                               <div className="flex items-center justify-between mb-0.5">
-                                <h3
-                                  className={cn(
-                                    "text-sm font-semibold truncate transition-colors",
-                                    selectedRoomId === room.id &&
-                                      room.tone &&
-                                      SPACE_TONES[room.tone]
-                                      ? SPACE_TONES[room.tone].color
-                                      : "text-mono-text",
-                                  )}
-                                >
-                                  {room.name}
-                                </h3>
-                                {room.timestamp && (
-                                  <span className="text-[10px] text-mono-muted">
-                                    {room.timestamp}
-                                  </span>
-                                )}
+                                <h3 className={cn(
+                                  "text-sm font-semibold truncate transition-colors",
+                                  selectedRoomId === room.id && room.tone && SPACE_TONES[room.tone] ? SPACE_TONES[room.tone].color : "text-mono-text"
+                                )}>{room.name}</h3>
+                                {room.timestamp && <span className="text-[10px] text-mono-muted">{room.timestamp}</span>}
                               </div>
                               <div className="flex items-center justify-between">
-                                <p
-                                  className={cn(
-                                    "text-xs truncate max-w-[140px]",
-                                    room.unread > 0
-                                      ? "text-mono-text font-medium"
-                                      : "text-mono-muted",
-                                  )}
-                                >
-                                  {room.snippet ||
-                                    (room.room_type === "group"
-                                      ? room.tone === "focus"
-                                        ? "Focusing..."
-                                        : room.tone === "social"
-                                          ? "Hanging out..."
-                                          : room.tone === "work"
-                                            ? "Collaborating..."
-                                            : "Quiet..."
-                                      : "Start chatting...")}
+                                <p className={cn("text-xs truncate max-w-[140px]", room.unread > 0 ? "text-mono-text font-medium" : "text-mono-muted")}>
+                                  {room.snippet || (room.room_type === 'group' ? (
+                                    room.tone === 'focus' ? 'Focusing...' :
+                                      room.tone === 'social' ? 'Hanging out...' :
+                                        room.tone === 'work' ? 'Collaborating...' : 'Quiet...'
+                                  ) : 'Start chatting...')}
                                 </p>
                                 {room.unread > 0 && (
                                   <span className="min-w-[18px] h-[18px] flex items-center justify-center rounded-full bg-white text-black text-[10px] font-bold px-1">
-                                    {room.unread > 99 ? "99+" : room.unread}
+                                    {room.unread > 99 ? '99+' : room.unread}
                                   </span>
                                 )}
                               </div>
@@ -319,7 +262,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </motion.div>
           )}
 
-          {activeTab === "search" && (
+          {activeTab === 'search' && (
             <motion.div
               key="search"
               initial={{ opacity: 0 }}
@@ -332,7 +275,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             </motion.div>
           )}
 
-          {activeTab === "requests" && (
+          {activeTab === 'requests' && (
             <motion.div
               key="requests"
               initial={{ opacity: 0 }}
@@ -350,38 +293,25 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* Footer Profile */}
       <div className="flex-shrink-0 p-3 border-t border-mono-glass-border">
         <div className="flex items-center gap-3 px-2">
-          <Avatar
-            size="sm"
-            name={
-              currentUser?.displayName || currentUser?.username || "My Profile"
-            }
-            src={currentUser?.avatar}
-          />
+          <Avatar size="sm" name={currentUser?.displayName || currentUser?.username || "My Profile"} src={currentUser?.avatar} />
           <div className="flex-1 min-w-0">
             <p className="text-xs font-medium text-mono-text truncate">
-              {currentUser?.displayName ||
-                currentUser?.username ||
-                "My Profile"}
+              {currentUser?.displayName || currentUser?.username || "My Profile"}
             </p>
             {currentUser?.username && (
-              <p className="text-[10px] text-mono-muted truncate">
-                @{currentUser.username}
-              </p>
+              <p className="text-[10px] text-mono-muted truncate">@{currentUser.username}</p>
             )}
           </div>
           <SettingsMenu
             user={{
-              name:
-                currentUser?.displayName ||
-                currentUser?.username ||
-                "My Profile",
+              name: currentUser?.displayName || currentUser?.username || "My Profile",
               username: currentUser?.username,
               email: currentUser?.email,
-              avatar: currentUser?.avatar,
+              avatar: currentUser?.avatar
             }}
             onLogout={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("user"); // Clear user data
+              localStorage.removeItem('token');
+              localStorage.removeItem('user'); // Clear user data
               window.location.reload();
             }}
             onConstellations={() => setIsConstellationOpen(true)}
@@ -399,7 +329,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         isOpen={isConstellationOpen}
         onClose={() => setIsConstellationOpen(false)}
       />
-    </nav>
+    </nav >
   );
 };
 

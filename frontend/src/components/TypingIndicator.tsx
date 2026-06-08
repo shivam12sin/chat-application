@@ -1,5 +1,5 @@
-import React from "react";
-import { cn } from "../utils/theme";
+import React from 'react';
+import { cn } from '../utils/theme';
 
 interface TypingIndicatorProps {
   users?: Array<{
@@ -19,14 +19,14 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-2 py-2 px-3 rounded-glass",
-        "bg-mono-surface-2 border border-mono-glass-border",
-        "animate-fade-up",
-        className,
+        'flex items-center gap-2 py-2 px-3 rounded-glass',
+        'bg-mono-surface-2 border border-mono-glass-border',
+        'animate-fade-up',
+        className
       )}
       role="status"
       aria-live="polite"
-      aria-label={`${users.map((u) => u.name).join(", ")} ${users.length === 1 ? "is" : "are"} typing`}
+      aria-label={`${users.map((u) => u.name).join(', ')} ${users.length === 1 ? 'is' : 'are'} typing`}
     >
       {/* Avatar stack */}
       <div className="flex -space-x-1">
@@ -34,10 +34,10 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
           <div
             key={user.id}
             className={cn(
-              "w-5 h-5 rounded-full border border-mono-glass-border",
-              "bg-mono-surface flex items-center justify-center",
-              "text-mono-muted text-xs font-medium",
-              "flex-shrink-0",
+              'w-5 h-5 rounded-full border border-mono-glass-border',
+              'bg-mono-surface flex items-center justify-center',
+              'text-mono-muted text-xs font-medium',
+              'flex-shrink-0'
             )}
             title={user.name}
           >
@@ -55,15 +55,12 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
         {users.length > 2 && (
           <div
             className={cn(
-              "w-5 h-5 rounded-full border border-mono-glass-border",
-              "bg-mono-surface flex items-center justify-center",
-              "text-mono-muted text-xs font-medium",
-              "flex-shrink-0",
+              'w-5 h-5 rounded-full border border-mono-glass-border',
+              'bg-mono-surface flex items-center justify-center',
+              'text-mono-muted text-xs font-medium',
+              'flex-shrink-0'
             )}
-            title={users
-              .slice(2)
-              .map((u) => u.name)
-              .join(", ")}
+            title={users.slice(2).map((u) => u.name).join(', ')}
           >
             +{users.length - 2}
           </div>
@@ -76,8 +73,8 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
           <div
             key={i}
             className={cn(
-              "w-2 h-2 rounded-full bg-mono-muted/60",
-              "animate-pulse",
+              'w-2 h-2 rounded-full bg-mono-muted/60',
+              'animate-pulse'
             )}
             style={{
               animationDelay: `${i * 100}ms`,
@@ -91,7 +88,7 @@ const TypingIndicator: React.FC<TypingIndicatorProps> = ({
       <span className="text-xs text-mono-muted ml-1">
         {users.length === 1
           ? `${users[0].name} is typing`
-          : `${users.map((u) => u.name).join(", ")} are typing`}
+          : `${users.map((u) => u.name).join(', ')} are typing`}
       </span>
     </div>
   );

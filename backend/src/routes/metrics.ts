@@ -12,13 +12,13 @@ const router = Router();
  * Returns Prometheus-formatted metrics
  */
 router.get('/', async (_req: Request, res: Response) => {
-  try {
-    const metrics = await getMetrics();
-    res.set('Content-Type', getContentType());
-    res.send(metrics);
-  } catch (error) {
-    res.status(500).send('Error collecting metrics');
-  }
+    try {
+        const metrics = await getMetrics();
+        res.set('Content-Type', getContentType());
+        res.send(metrics);
+    } catch (error) {
+        res.status(500).send('Error collecting metrics');
+    }
 });
 
 export default router;

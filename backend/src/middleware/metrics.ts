@@ -9,13 +9,13 @@ import { recordHttpRequest } from '../services/MetricsService';
  * Middleware to record HTTP request metrics
  */
 export const metricsMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  const start = Date.now();
+    const start = Date.now();
 
-  // Record metrics when response finishes
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    recordHttpRequest(req.method, req.path, res.statusCode, duration);
-  });
+    // Record metrics when response finishes
+    res.on('finish', () => {
+        const duration = Date.now() - start;
+        recordHttpRequest(req.method, req.path, res.statusCode, duration);
+    });
 
-  next();
+    next();
 };

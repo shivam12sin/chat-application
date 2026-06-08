@@ -1,7 +1,9 @@
 exports.up = (pgm) => {
-    // Already exists in schema.sql: username VARCHAR(50) UNIQUE NOT NULL
+    pgm.addConstraint('users', 'users_username_key', {
+        unique: ['username'],
+    });
 };
 
 exports.down = (pgm) => {
-    // Already handled
+    pgm.dropConstraint('users', 'users_username_key');
 };

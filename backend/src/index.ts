@@ -29,28 +29,19 @@ const PORT = process.env.PORT || 3000;
 // ============================================
 app.use(helmet()); // Security headers
 app.use(compression()); // Compress responses
-app.use(
-  cors({
+app.use(cors({
     origin: (origin, callback) => {
-      const allowedOrigins = (process.env.CORS_ORIGIN || '').split(',').map(o => o.trim());
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-
-      if (
-        allowedOrigins.includes('*') ||
-        allowedOrigins.includes(origin) ||
-        origin.endsWith('.vercel.app') ||
-        origin.startsWith('http://localhost:') ||
-        process.env.NODE_ENV === 'development'
-      ) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
+        const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:5173').split(',');
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) !== -1 || process.env.NODE_ENV === 'development') {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
     },
     credentials: true,
-  })
-);
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -65,17 +56,17 @@ app.use(metricsMiddleware);
 
 // Request logging
 app.use((req: Request, res: Response, next) => {
-  const start = Date.now();
-  res.on('finish', () => {
-    logInfo('Request completed', {
-      requestId: (req as any).requestId,
-      method: req.method,
-      path: req.path,
-      statusCode: res.statusCode,
-      durationMs: Date.now() - start,
+    const start = Date.now();
+    res.on('finish', () => {
+        logInfo('Request completed', {
+            requestId: (req as any).requestId,
+            method: req.method,
+            path: req.path,
+            statusCode: res.statusCode,
+            durationMs: Date.now() - start,
+        });
     });
-  });
-  next();
+    next();
 });
 
 // ============================================
@@ -86,13 +77,7 @@ import reactionRoutes from './routes/reactions';
 import searchRoutes from './routes/search';
 import blocksRoutes from './routes/blocks';
 import e2eRoutes from './routes/e2e';
-import {
-  authLimiter,
-  messageLimiter,
-  uploadLimiter,
-  searchLimiter,
-  standardLimiter,
-} from './middleware/rateLimit';
+import { authLimiter, messageLimiter, uploadLimiter, searchLimiter, standardLimiter } from './middleware/rateLimit';
 
 // Apply standard rate limiting to all routes
 app.use('/api', standardLimiter);
@@ -109,8 +94,8 @@ app.use('/api/contacts', contactRoutes);
 app.use('/api/upload', uploadLimiter, uploadRoutes);
 app.use('/api/reactions', reactionRoutes);
 app.use('/api/search', searchLimiter, searchRoutes);
-app.use('/api', blocksRoutes); // /api/users/:id/block, /api/blocked, /api/users/:id/mute, /api/muted, etc.
-app.use('/api/e2e', e2eRoutes); // E2E encryption key management
+app.use('/api', blocksRoutes);  // /api/users/:id/block, /api/blocked, /api/users/:id/mute, /api/muted, etc.
+app.use('/api/e2e', e2eRoutes);  // E2E encryption key management
 
 // Spotify integration (secure token generation)
 import spotifyRoutes from './routes/spotify';
@@ -142,166 +127,128 @@ import { ReactionRepository } from './repositories/ReactionRepository';
 import { MessageDeleteRepository } from './repositories/MessageDeleteRepository';
 import { ScheduledMessageRepository } from './repositories/ScheduledMessageRepository';
 import { initializeElasticsearchIndex } from './config/elasticsearch';
-import { initializeDatabase } from './config/initializer';
 
 // Declare global io
 declare global {
-  // eslint-disable-next-line no-var
-  var io: any;
+    var io: any;
 }
 
 async function startServer() {
-  try {
-    // Test database connection
-    const dbHealthy = await Database.healthCheck();
-    if (!dbHealthy) {
-      throw new Error('Database connection failed');
-    }
-    console.log('Database connected');
-
-    // Run database initializer (creates base schema, SQL migrations, and JS migrations)
-    await initializeDatabase();
-
-    // Initialize reactions table
     try {
-      await ReactionRepository.initTable();
-      console.log('Reactions table initialized');
-    } catch (err: any) {
-      if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
-        console.log('Reactions table already initialized or being initialized concurrently');
-      } else {
-        throw err;
-      }
-    }
-
-    // Initialize message delete tables
-    try {
-      await MessageDeleteRepository.initTables();
-      console.log('Message delete tables initialized');
-    } catch (err: any) {
-      if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
-        console.log('Message delete tables already initialized or being initialized concurrently');
-      } else {
-        throw err;
-      }
-    }
-
-    // Initialize scheduled messages table
-    try {
-      await ScheduledMessageRepository.initTable();
-      console.log('Scheduled messages table initialized');
-    } catch (err: any) {
-      if (err.code === '23505' || err.code === '42P07' || err.code === '42710') {
-        console.log(
-          'Scheduled messages table already initialized or being initialized concurrently'
-        );
-      } else {
-        throw err;
-      }
-    }
-
-    // Test Redis connection
-    const redisHealthy = await RedisService.healthCheck();
-    if (!redisHealthy) {
-      throw new Error('Redis connection failed');
-    }
-
-    // Initialize Elasticsearch (non-blocking, app works without it)
-    initializeElasticsearchIndex().catch(err => {
-      console.warn('Elasticsearch init skipped (will use PostgreSQL fallback):', err.message);
-    });
-
-    // Background job: Process expired deletes every 2 seconds
-    setInterval(async () => {
-      try {
-        const count = await MessageDeleteRepository.processExpiredDeletes();
-        if (count > 0) {
-          console.log(`Hard deleted ${count} expired messages`);
+        // Test database connection
+        const dbHealthy = await Database.healthCheck();
+        if (!dbHealthy) {
+            throw new Error('Database connection failed');
         }
-      } catch (err) {
-        console.error('Error processing expired deletes:', err);
-      }
-    }, 2000);
+        console.log('Database connected');
 
-    // Background job: Process scheduled messages every 10 seconds
-    setInterval(async () => {
-      try {
-        // Poll for due messages (concurrency safe via SKIP LOCKED)
-        const dueMessages = await ScheduledMessageRepository.pollDueMessages(50);
+        // Initialize reactions table
+        await ReactionRepository.initTable();
+        console.log('Reactions table initialized');
 
-        if (dueMessages.length > 0) {
-          console.log(`Processing ${dueMessages.length} scheduled messages`);
+        // Initialize message delete tables
+        await MessageDeleteRepository.initTables();
+        console.log('Message delete tables initialized');
 
-          for (const msg of dueMessages) {
+        // Test Redis connection
+        const redisHealthy = await RedisService.healthCheck();
+        if (!redisHealthy) {
+            throw new Error('Redis connection failed');
+        }
+
+        // Initialize Elasticsearch (non-blocking, app works without it)
+        initializeElasticsearchIndex().catch(err => {
+            console.warn('Elasticsearch init skipped (will use PostgreSQL fallback):', err.message);
+        });
+
+        // Background job: Process expired deletes every 2 seconds
+        setInterval(async () => {
             try {
-              // 1. Create the actual message
-              const result = await Database.query(
-                `INSERT INTO messages (room_id, user_id, content, media_url, created_at)
+                const count = await MessageDeleteRepository.processExpiredDeletes();
+                if (count > 0) {
+                    console.log(`Hard deleted ${count} expired messages`);
+                }
+            } catch (err) {
+                console.error('Error processing expired deletes:', err);
+            }
+        }, 2000);
+
+        // Background job: Process scheduled messages every 10 seconds
+        setInterval(async () => {
+            try {
+                // Poll for due messages (concurrency safe via SKIP LOCKED)
+                const dueMessages = await ScheduledMessageRepository.pollDueMessages(50);
+
+                if (dueMessages.length > 0) {
+                    console.log(`Processing ${dueMessages.length} scheduled messages`);
+
+                    for (const msg of dueMessages) {
+                        try {
+                            // 1. Create the actual message
+                            const result = await Database.query(
+                                `INSERT INTO messages (room_id, user_id, content, media_url, created_at)
                                  VALUES ($1, $2, $3, $4, $5)
                                  RETURNING *`,
-                [msg.room_id, msg.sender_id, msg.content, msg.media_url, new Date()]
-              );
-              const newMessage = result.rows[0];
+                                [msg.room_id, msg.sender_id, msg.content, msg.media_url, new Date()]
+                            );
+                            const newMessage = result.rows[0];
 
-              // 2. Fetch sender info for socket event
-              const sender = await Database.query('SELECT username FROM users WHERE id = $1', [
-                msg.sender_id,
-              ]);
-              const username = sender.rows[0]?.username || 'User';
+                            // 2. Fetch sender info for socket event
+                            const sender = await Database.query('SELECT username FROM users WHERE id = $1', [msg.sender_id]);
+                            const username = sender.rows[0]?.username || 'User';
 
-              // 3. Emit via Socket.io
-              if (global.io) {
-                global.io.to(`room:${msg.room_id}`).emit('message:new', {
-                  ...newMessage,
-                  sender: {
-                    id: msg.sender_id,
-                    username: username,
-                  },
-                });
-              }
+                            // 3. Emit via Socket.io
+                            if (global.io) {
+                                global.io.to(`room:${msg.room_id}`).emit('message:new', {
+                                    ...newMessage,
+                                    sender: {
+                                        id: msg.sender_id,
+                                        username: username,
+                                    },
+                                });
+                            }
 
-              // 4. Mark as sent
-              await ScheduledMessageRepository.markAsSent(msg.id);
+                            // 4. Mark as sent
+                            await ScheduledMessageRepository.markAsSent(msg.id);
+
+                        } catch (err) {
+                            console.error(`Failed to send scheduled message ${msg.id}:`, err);
+                            await ScheduledMessageRepository.markAsFailed(msg.id, err instanceof Error ? err.message : 'Unknown error');
+                        }
+                    }
+                }
             } catch (err) {
-              console.error(`Failed to send scheduled message ${msg.id}:`, err);
-              await ScheduledMessageRepository.markAsFailed(
-                msg.id,
-                err instanceof Error ? err.message : 'Unknown error'
-              );
+                console.error('Error processing scheduled messages:', err);
             }
-          }
-        }
-      } catch (err) {
-        console.error('Error processing scheduled messages:', err);
-      }
-    }, 10000);
+        }, 10000);
 
-    httpServer.listen(PORT, () => {
-      console.log('='.repeat(50));
-      console.log('High-Scale Chat Server Started');
-      console.log('='.repeat(50));
-      console.log(`Server: http://localhost:${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log(`Instance: ${process.env.SERVER_INSTANCE_ID || 'default'}`);
-      console.log(`Redis Adapter: ENABLED (Horizontal Scaling Ready)`);
-      console.log('='.repeat(50));
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
+        httpServer.listen(PORT, () => {
+            console.log('='.repeat(50));
+            console.log('High-Scale Chat Server Started');
+            console.log('='.repeat(50));
+            console.log(`Server: http://localhost:${PORT}`);
+            console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+            console.log(`Instance: ${process.env.SERVER_INSTANCE_ID || 'default'}`);
+            console.log(`Redis Adapter: ENABLED (Horizontal Scaling Ready)`);
+            console.log('='.repeat(50));
+        });
+
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
 }
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('SIGTERM received, shutting down gracefully...');
+    console.log('SIGTERM received, shutting down gracefully...');
 
-  httpServer.close(async () => {
-    await Database.close();
-    await redisClient.quit();
-    console.log('Server shut down successfully');
-    process.exit(0);
-  });
+    httpServer.close(async () => {
+        await Database.close();
+        await redisClient.quit();
+        console.log('Server shut down successfully');
+        process.exit(0);
+    });
 });
 
 startServer();

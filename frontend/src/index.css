@@ -18,32 +18,7 @@
   }
 
   body {
-    @apply bg-black text-mono-text font-sans antialiased;
-    overflow: hidden;
-    /* Mobile browser chrome fix: dvh adjusts for address bar, vh does not */
-    /* IMPORTANT: vh must come FIRST as fallback, dvh must come LAST to override */
-    height: 100vh;
-    height: 100dvh;
-    /* JS sets --dvh as ultimate fallback via visualViewport API */
-    height: calc(var(--dvh, 1dvh) * 100);
-  }
-
-  /* Fix h-screen Tailwind class for mobile browsers */
-  .h-screen {
-    /* IMPORTANT: correct cascade order - dvh MUST be last to override vh */
-    height: 100vh;
-    height: 100dvh;
-    height: calc(var(--dvh, 1dvh) * 100);
-  }
-
-  /* Safe area inset for iPhone notch/home bar */
-  .composer-safe-area {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-  }
-
-  /* Prevent iOS double-tap zoom on interactive elements */
-  button, input, textarea, select {
-    touch-action: manipulation;
+    @apply bg-black text-mono-text font-sans antialiased overflow-hidden;
   }
 }
 

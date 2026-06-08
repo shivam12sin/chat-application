@@ -29,10 +29,6 @@ RUN npm ci --only=production
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
 
-# Copy migrations and database folders for on-startup DB initializations/migrations
-COPY --from=builder /app/migrations ./migrations
-COPY --from=builder /app/database ./database
-
 # Copy seed script
 COPY seed_room.js ./seed_room.js
 

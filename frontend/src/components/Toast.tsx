@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { cn } from "../utils/theme";
+import React, { useEffect } from 'react';
+import { cn } from '../utils/theme';
 
-export type ToastType = "success" | "error" | "info" | "warning";
+export type ToastType = 'success' | 'error' | 'info' | 'warning';
 
 interface Toast {
   id: string;
@@ -38,7 +38,7 @@ export const ToastItem: React.FC<ToastProps> = ({
 
   const typeStyles = {
     success: {
-      bg: "bg-white/10 border-white/20 shadow-glass",
+      bg: 'bg-white/10 border-white/20 shadow-glass',
       icon: (
         <div className="rounded-full bg-white/20 p-0.5">
           <svg
@@ -55,10 +55,10 @@ export const ToastItem: React.FC<ToastProps> = ({
           </svg>
         </div>
       ),
-      text: "text-white",
+      text: 'text-white',
     },
     error: {
-      bg: "bg-white/10 border-white/20 shadow-glass",
+      bg: 'bg-white/10 border-white/20 shadow-glass',
       icon: (
         <div className="rounded-full bg-white/20 p-0.5">
           <svg
@@ -75,10 +75,10 @@ export const ToastItem: React.FC<ToastProps> = ({
           </svg>
         </div>
       ),
-      text: "text-white",
+      text: 'text-white',
     },
     warning: {
-      bg: "bg-white/10 border-white/20 shadow-glass",
+      bg: 'bg-white/10 border-white/20 shadow-glass',
       icon: (
         <div className="rounded-full bg-white/20 p-0.5">
           <svg
@@ -95,10 +95,10 @@ export const ToastItem: React.FC<ToastProps> = ({
           </svg>
         </div>
       ),
-      text: "text-white",
+      text: 'text-white',
     },
     info: {
-      bg: "bg-white/10 border-white/20 shadow-glass",
+      bg: 'bg-white/10 border-white/20 shadow-glass',
       icon: (
         <div className="rounded-full bg-white/20 p-0.5">
           <svg
@@ -115,7 +115,7 @@ export const ToastItem: React.FC<ToastProps> = ({
           </svg>
         </div>
       ),
-      text: "text-white",
+      text: 'text-white',
     },
   };
 
@@ -124,12 +124,12 @@ export const ToastItem: React.FC<ToastProps> = ({
   return (
     <div
       className={cn(
-        "flex items-start gap-3 px-4 py-3",
-        "rounded-glass border",
-        "bg-mono-surface/80 backdrop-blur-glass",
+        'flex items-start gap-3 px-4 py-3',
+        'rounded-glass border',
+        'bg-mono-surface/80 backdrop-blur-glass',
         style.bg,
-        "animate-slide-up",
-        "shadow-lg",
+        'animate-slide-up',
+        'shadow-lg'
       )}
       role="alert"
       aria-live="assertive"
@@ -138,21 +138,23 @@ export const ToastItem: React.FC<ToastProps> = ({
       <div className="flex-shrink-0 pt-0.5">{style.icon}</div>
 
       <div className="flex-1 min-w-0">
-        <p className={cn("text-sm font-medium", style.text)}>{message}</p>
+        <p className={cn('text-sm font-medium', style.text)}>
+          {message}
+        </p>
       </div>
 
       {action && (
         <button
           onClick={action.onClick}
           className={cn(
-            "flex-shrink-0 px-3 py-1 rounded-glass text-xs font-medium",
-            "bg-mono-surface hover:bg-mono-surface/80",
-            "border border-mono-glass-border hover:border-mono-glass-highlight",
+            'flex-shrink-0 px-3 py-1 rounded-glass text-xs font-medium',
+            'bg-mono-surface hover:bg-mono-surface/80',
+            'border border-mono-glass-border hover:border-mono-glass-highlight',
             style.text,
-            "transition-all duration-fast ease-glass",
-            "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-mono-text/50",
-            "active:scale-95 hover:translate-y-[-1px]",
-            "whitespace-nowrap",
+            'transition-all duration-fast ease-glass',
+            'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-mono-text/50',
+            'active:scale-95 hover:translate-y-[-1px]',
+            'whitespace-nowrap'
           )}
         >
           {action.label}
@@ -162,13 +164,13 @@ export const ToastItem: React.FC<ToastProps> = ({
       <button
         onClick={() => onDismiss(id)}
         className={cn(
-          "flex-shrink-0 p-1 rounded-glass",
-          "bg-mono-surface-2 hover:bg-mono-surface/40",
-          "border border-transparent hover:border-mono-glass-border",
-          "text-mono-muted hover:text-mono-text",
-          "transition-all duration-fast ease-glass",
-          "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-mono-text/50",
-          "active:scale-95",
+          'flex-shrink-0 p-1 rounded-glass',
+          'bg-mono-surface-2 hover:bg-mono-surface/40',
+          'border border-transparent hover:border-mono-glass-border',
+          'text-mono-muted hover:text-mono-text',
+          'transition-all duration-fast ease-glass',
+          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-mono-text/50',
+          'active:scale-95'
         )}
         aria-label="Close notification"
       >
@@ -194,27 +196,27 @@ export const ToastItem: React.FC<ToastProps> = ({
 interface ToastContainerProps {
   toasts: Toast[];
   onDismiss: (id: string) => void;
-  position?: "top-right" | "top-left" | "bottom-right" | "bottom-left";
+  position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 }
 
 const ToastContainer: React.FC<ToastContainerProps> = ({
   toasts,
   onDismiss,
-  position = "top-right",
+  position = 'top-right',
 }) => {
   const positionStyles = {
-    "top-right": "top-4 right-4",
-    "top-left": "top-4 left-4",
-    "bottom-right": "bottom-4 right-4",
-    "bottom-left": "bottom-4 left-4",
+    'top-right': 'top-4 right-4',
+    'top-left': 'top-4 left-4',
+    'bottom-right': 'bottom-4 right-4',
+    'bottom-left': 'bottom-4 left-4',
   };
 
   return (
     <div
       className={cn(
-        "fixed z-50 pointer-events-none",
+        'fixed z-50 pointer-events-none',
         positionStyles[position],
-        "flex flex-col gap-2 max-w-[360px]",
+        'flex flex-col gap-2 max-w-[360px]'
       )}
       role="region"
       aria-label="Notifications"
@@ -222,7 +224,10 @@ const ToastContainer: React.FC<ToastContainerProps> = ({
     >
       {toasts.map((toast) => (
         <div key={toast.id} className="pointer-events-auto">
-          <ToastItem {...toast} onDismiss={onDismiss} />
+          <ToastItem
+            {...toast}
+            onDismiss={onDismiss}
+          />
         </div>
       ))}
     </div>

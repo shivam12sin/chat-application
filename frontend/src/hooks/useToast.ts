@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { ToastType } from "../components/Toast";
+import { useState, useCallback } from 'react';
+import { ToastType } from '../components/Toast';
 
 interface Toast {
   id: string;
@@ -18,9 +18,9 @@ export const useToast = () => {
   const addToast = useCallback(
     (
       message: string,
-      type: ToastType = "info",
+      type: ToastType = 'info',
       duration: number = 4000,
-      action?: Toast["action"],
+      action?: Toast['action']
     ) => {
       const id = `toast-${Date.now()}-${Math.random()}`;
       const toast: Toast = {
@@ -41,7 +41,7 @@ export const useToast = () => {
 
       return id;
     },
-    [],
+    []
   );
 
   const dismissToast = useCallback((id: string) => {
@@ -49,27 +49,27 @@ export const useToast = () => {
   }, []);
 
   const success = useCallback(
-    (message: string, duration?: number, action?: Toast["action"]) =>
-      addToast(message, "success", duration, action),
-    [addToast],
+    (message: string, duration?: number, action?: Toast['action']) =>
+      addToast(message, 'success', duration, action),
+    [addToast]
   );
 
   const error = useCallback(
-    (message: string, duration?: number, action?: Toast["action"]) =>
-      addToast(message, "error", duration, action),
-    [addToast],
+    (message: string, duration?: number, action?: Toast['action']) =>
+      addToast(message, 'error', duration, action),
+    [addToast]
   );
 
   const warning = useCallback(
-    (message: string, duration?: number, action?: Toast["action"]) =>
-      addToast(message, "warning", duration, action),
-    [addToast],
+    (message: string, duration?: number, action?: Toast['action']) =>
+      addToast(message, 'warning', duration, action),
+    [addToast]
   );
 
   const info = useCallback(
-    (message: string, duration?: number, action?: Toast["action"]) =>
-      addToast(message, "info", duration, action),
-    [addToast],
+    (message: string, duration?: number, action?: Toast['action']) =>
+      addToast(message, 'info', duration, action),
+    [addToast]
   );
 
   return {

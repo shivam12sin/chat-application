@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { cn, announceToScreenReader } from "../utils/theme";
-import MessageItem, { Message } from "./MessageItem";
+import React, { useEffect, useRef, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn, announceToScreenReader } from '../utils/theme';
+import MessageItem, { Message } from './MessageItem';
 
 interface MessageListProps {
   messages: Message[];
@@ -14,7 +14,7 @@ interface MessageListProps {
   searchQuery?: string;
   onPollVote?: (pollId: string, optionIndex: number) => void;
   onReaction?: (messageId: string, emoji: string) => void;
-  onDelete?: (messageId: string, mode: "me" | "everyone") => void;
+  onDelete?: (messageId: string, mode: 'me' | 'everyone') => void;
   onPin?: (messageId: string) => void;
   onConstellation?: (messageId: string, roomId: number) => void;
   onReply?: (messageId: string, senderName: string, content: string) => void;
@@ -33,7 +33,7 @@ const MessageList: React.FC<MessageListProps> = ({
   hasMore = false,
   onLoadMore,
   roomId,
-  roomName = "Chat",
+  roomName = 'Chat',
   className,
   searchQuery,
   onPollVote,
@@ -60,7 +60,7 @@ const MessageList: React.FC<MessageListProps> = ({
       setTimeout(() => {
         container.scrollTo({
           top: container.scrollHeight,
-          behavior: "smooth",
+          behavior: 'smooth'
         });
       }, 50);
     }
@@ -70,7 +70,7 @@ const MessageList: React.FC<MessageListProps> = ({
   const handleLoadMore = useCallback(() => {
     if (onLoadMore && hasMore && !isLoading) {
       onLoadMore();
-      announceToScreenReader("Loading earlier messages", true);
+      announceToScreenReader('Loading earlier messages', true);
     }
   }, [onLoadMore, hasMore, isLoading]);
 
@@ -82,21 +82,26 @@ const MessageList: React.FC<MessageListProps> = ({
         handleLoadMore();
       }
     },
-    [hasMore, isLoading, handleLoadMore],
+    [hasMore, isLoading, handleLoadMore]
   );
 
   return (
     <div
-      className={cn("flex flex-col h-full w-full bg-mono-bg", className)}
+      className={cn(
+        'flex flex-col h-full w-full bg-mono-bg',
+        className
+      )}
       ref={listRef}
     >
+
+
       {/* Messages Container */}
       <ul
         ref={scrollContainerRef}
         className={cn(
-          "flex-1 overflow-y-auto overflow-x-hidden",
-          "px-4 py-3 space-y-2",
-          "scroll-smooth",
+          'flex-1 overflow-y-auto overflow-x-hidden',
+          'px-4 py-3 space-y-2',
+          'scroll-smooth'
         )}
         onScroll={handleScroll}
         role="log"
@@ -118,13 +123,13 @@ const MessageList: React.FC<MessageListProps> = ({
               <button
                 onClick={handleLoadMore}
                 className={cn(
-                  "px-3 py-1 rounded-glass text-xs",
-                  "bg-mono-surface hover:bg-mono-surface/80",
-                  "border border-mono-glass-border hover:border-mono-glass-highlight",
-                  "text-mono-muted hover:text-mono-text",
-                  "transition-all duration-fast ease-glass",
-                  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-mono-text/50",
-                  "hover:translate-y-[-1px] active:scale-95",
+                  'px-3 py-1 rounded-glass text-xs',
+                  'bg-mono-surface hover:bg-mono-surface/80',
+                  'border border-mono-glass-border hover:border-mono-glass-highlight',
+                  'text-mono-muted hover:text-mono-text',
+                  'transition-all duration-fast ease-glass',
+                  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-mono-text/50',
+                  'hover:translate-y-[-1px] active:scale-95'
                 )}
               >
                 Load earlier messages
@@ -139,9 +144,9 @@ const MessageList: React.FC<MessageListProps> = ({
             <div className="text-center py-12">
               <div
                 className={cn(
-                  "w-16 h-16 mx-auto mb-4 rounded-glass",
-                  "bg-mono-surface-2 border border-mono-glass-border",
-                  "flex items-center justify-center",
+                  'w-16 h-16 mx-auto mb-4 rounded-glass',
+                  'bg-mono-surface-2 border border-mono-glass-border',
+                  'flex items-center justify-center'
                 )}
               >
                 <svg
@@ -180,22 +185,7 @@ const MessageList: React.FC<MessageListProps> = ({
               transition={{ duration: 0.3, ease: [0.2, 0.9, 0.2, 1] }}
               className="transition-colors duration-500"
             >
-              <MessageItem
-                message={message}
-                searchQuery={searchQuery}
-                roomId={roomId}
-                onPollVote={onPollVote}
-                onReaction={onReaction}
-                onDelete={onDelete}
-                onPin={onPin}
-                onConstellation={onConstellation}
-                onReply={onReply}
-                onForward={onForward}
-                onSelect={onSelect}
-                isSelectMode={isSelectMode}
-                isSelected={selectedMessageIds.includes(message.id)}
-                onToggleSelect={onToggleSelect}
-              />
+              <MessageItem message={message} searchQuery={searchQuery} roomId={roomId} onPollVote={onPollVote} onReaction={onReaction} onDelete={onDelete} onPin={onPin} onConstellation={onConstellation} onReply={onReply} onForward={onForward} onSelect={onSelect} isSelectMode={isSelectMode} isSelected={selectedMessageIds.includes(message.id)} onToggleSelect={onToggleSelect} />
             </motion.li>
           ))}
         </AnimatePresence>
@@ -210,13 +200,13 @@ const MessageList: React.FC<MessageListProps> = ({
                     <div
                       key={i}
                       className={cn(
-                        "w-2 h-2 rounded-full bg-mono-muted/60",
-                        "animate-pulse",
+                        'w-2 h-2 rounded-full bg-mono-muted/60',
+                        'animate-pulse',
                         {
-                          "animation-delay-0": i === 0,
-                          "animation-delay-100": i === 1,
-                          "animation-delay-200": i === 2,
-                        },
+                          'animation-delay-0': i === 0,
+                          'animation-delay-100': i === 1,
+                          'animation-delay-200': i === 2,
+                        }
                       )}
                       style={{
                         animationDelay: `${i * 100}ms`,
@@ -232,7 +222,7 @@ const MessageList: React.FC<MessageListProps> = ({
           </li>
         )}
       </ul>
-    </div>
+    </div >
   );
 };
 
